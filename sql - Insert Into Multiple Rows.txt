@@ -1,0 +1,19 @@
+INSERT INTO Product (Code,Name,IsActive,CreatedById,CreatedDate )
+
+SELECT * FROM 
+(    
+  SELECT '10001000' AS Code,
+         'Blackburn sunglasses' AS Name,
+         1 AS IsActive,
+         1 AS CreatedById,
+         '2/20/2015 12:23:00 AM' AS CreatedDate 
+   FROM Product    
+   UNION 
+   SELECT '10005200' AS Code,
+          '30 panel football' AS Name,
+          1 AS IsActive,
+          1 AS CreatedById,
+          '2/20/2015 12:23:09 AM' AS CreatedDate 
+    FROM Product
+
+) ;

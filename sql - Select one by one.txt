@@ -1,0 +1,7 @@
+            strSQL = "SELECT TOP 1 * " & _
+                     "FROM ( " & _
+                     "SELECT TOP " & Record_Number & " * " & _
+                     "FROM [C6_Code] " & _
+                     "ORDER BY [Code_L6] ) t " & _
+                     "ORDER BY [Code_L6] DESC"
+                
