@@ -1,10 +1,7 @@
-
-DROP TABLE IF EXISTS public.t_cb_exp_st;
-
 CREATE OR REPLACE FUNCTION q_cb_exp_mt() returns BOOLEAN AS
 $$
 BEGIN
-
+DROP TABLE IF EXISTS public.t_cb_exp_st;
 CREATE TABLE IF NOT EXISTS public.t_cb_exp_st
 (
     rep_month character varying(255) COLLATE pg_catalog."default",

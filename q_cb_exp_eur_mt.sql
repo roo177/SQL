@@ -1,10 +1,10 @@
 -- Table: public.t_q_cb_exp_eur_eur
 
-DROP TABLE IF EXISTS public.t_cb_exp_eur_st;
-
-CREATE OR REPLACE FUNCTION q_cb_exp_mt() returns BOOLEAN AS
+CREATE OR REPLACE FUNCTION q_cb_exp_eur_mt() returns BOOLEAN AS
 $$
 BEGIN
+
+DROP TABLE IF EXISTS public.t_cb_exp_eur_st;
 
 CREATE TABLE IF NOT EXISTS public.t_cb_exp_eur_st
 (
