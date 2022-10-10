@@ -4,13 +4,13 @@ CREATE OR REPLACE FUNCTION q_cb_exp_eur_mt() returns BOOLEAN AS
 $$
 BEGIN
 
-DROP TABLE IF EXISTS public.t_cb_exp_eur_st;
+--DROP TABLE IF EXISTS public.t_cb_exp_eur_st;
 
 CREATE TABLE IF NOT EXISTS public.t_cb_exp_eur_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
     pc character varying(3) COLLATE pg_catalog."default",
-    j_code character varying(25) COLLATE pg_catalog."default",
+    j_code character varying(50) COLLATE pg_catalog."default",
     desc_tr_l2 character varying(255) COLLATE pg_catalog."default",
     desc_tr_l3 character varying(255) COLLATE pg_catalog."default",
     month timestamp with time zone,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS public.t_cb_exp_eur_st
     l_4 character varying(2) COLLATE pg_catalog."default",
     l_5 character varying(2) COLLATE pg_catalog."default",
     l_6 character varying(3) COLLATE pg_catalog."default",
-    key_r_pc_l6 character varying(25) COLLATE pg_catalog."default"
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default"
 )
 
 TABLESPACE pg_default;
