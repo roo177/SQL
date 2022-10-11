@@ -1,4 +1,4 @@
--- Table: public.t_q_cb_exp_eur_eur
+DROP FUNCTION IF EXISTS public.q_cb_exp_eur_mt();
 
 CREATE OR REPLACE FUNCTION q_cb_exp_eur_mt() returns BOOLEAN AS
 $$
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.t_cb_exp_eur_st
     desc_tr_l2 character varying(255) COLLATE pg_catalog."default",
     desc_tr_l3 character varying(255) COLLATE pg_catalog."default",
     month timestamp with time zone,
-    sumofeur_expense double precision,
+    eur_expense double precision,
     up_curr_conv character varying(3) COLLATE pg_catalog."default",
     l_1 character varying(1) COLLATE pg_catalog."default",
     l_2 character varying(2) COLLATE pg_catalog."default",
