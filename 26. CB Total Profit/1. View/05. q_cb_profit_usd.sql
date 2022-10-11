@@ -1,6 +1,6 @@
 -- View: public.q_cb_profit_usd
 
-DROP VIEW public.q_cb_profit_usd;
+-- DROP VIEW public.q_cb_profit_usd;
 
 CREATE OR REPLACE VIEW public.q_cb_profit_usd
  AS
