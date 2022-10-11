@@ -1,6 +1,6 @@
 -- View: public.q_budget_project_months
 
--- DROP VIEW public.q_budget_project_months;
+DROP VIEW public.q_budget_project_months;
 
 CREATE OR REPLACE VIEW public.q_budget_project_months
  AS
