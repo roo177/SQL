@@ -1783,9 +1783,9 @@ GROUP BY q_cb_inc_calculation.rep_month, q_cb_inc_calculation.pc, q_cb_inc_calcu
 
 CREATE OR REPLACE VIEW -- ok
 q_cb_inc_total_mod AS
-SELECT t_cb_inc_total_st.rep_month, t_cb_inc_total_st.pc, t_cb_inc_total_st.l_1, t_cb_inc_total_st.l_2, t_cb_inc_total_st.l_3, t_cb_inc_total_st.l_4, t_cb_inc_total_st.l_5, t_cb_inc_total_st.l_6, t_cb_inc_total_st.inc_base_mon AS month, t_cb_inc_total_st.inc_total, t_cb_inc_total_st.currency, t_cb_inc_total_st.key_r_pc_l6
-FROM t_cb_inc_total_st
-WHERE (t_cb_inc_total_st.rep_month)=(SELECT rep_month FROM q_rep_month_max_val);
+SELECT t_cb_inc_st.rep_month, t_cb_inc_st.pc, t_cb_inc_st.l_1, t_cb_inc_st.l_2, t_cb_inc_st.l_3, t_cb_inc_st.l_4, t_cb_inc_st.l_5, t_cb_inc_st.l_6, t_cb_inc_st.inc_base_mon AS month, t_cb_inc_st.inc_total, t_cb_inc_st.currency, t_cb_inc_st.key_r_pc_l6
+FROM t_cb_inc_st
+WHERE (t_cb_inc_st.rep_month)=(SELECT rep_month FROM q_rep_month_max_val);
 
 CREATE OR REPLACE VIEW -- not ok
 q_cb_inc_total_mod_mt AS
@@ -2021,30 +2021,30 @@ FROM q_cb_monthly_curr_rates_lastm_mod;
 
 CREATE OR REPLACE VIEW -- ok
 q_cb_pr_wbs AS
-SELECT t_cb_inc_total_st.rep_month
-	,t_cb_inc_total_st.pc
-	,t_cb_inc_total_st.l_1
-	,t_cb_inc_total_st.l_2
-	,t_cb_inc_total_st.l_3
-	,t_cb_inc_total_st.l_4
-	,t_cb_inc_total_st.l_5
-	,t_cb_inc_total_st.l_6
-	,t_cb_inc_total_st.currency
-	,t_cb_inc_total_st.inc_base_mon AS month 
-	,t_cb_inc_total_st.key_r_pc_l6
-FROM t_cb_inc_total_st 
-GROUP BY t_cb_inc_total_st.rep_month
-	,t_cb_inc_total_st.pc
-	,t_cb_inc_total_st.l_1
-	,t_cb_inc_total_st.l_2
-	,t_cb_inc_total_st.l_3
-	,t_cb_inc_total_st.l_4
-	,t_cb_inc_total_st.l_5
-	,t_cb_inc_total_st.l_6
-	,t_cb_inc_total_st.currency
-	,t_cb_inc_total_st.inc_base_mon 
-	,t_cb_inc_total_st.key_r_pc_l6
-HAVING (((sum(t_cb_inc_total_st.inc_total))<>0)) 
+SELECT t_cb_inc_st.rep_month
+	,t_cb_inc_st.pc
+	,t_cb_inc_st.l_1
+	,t_cb_inc_st.l_2
+	,t_cb_inc_st.l_3
+	,t_cb_inc_st.l_4
+	,t_cb_inc_st.l_5
+	,t_cb_inc_st.l_6
+	,t_cb_inc_st.currency
+	,t_cb_inc_st.inc_base_mon AS month 
+	,t_cb_inc_st.key_r_pc_l6
+FROM t_cb_inc_st 
+GROUP BY t_cb_inc_st.rep_month
+	,t_cb_inc_st.pc
+	,t_cb_inc_st.l_1
+	,t_cb_inc_st.l_2
+	,t_cb_inc_st.l_3
+	,t_cb_inc_st.l_4
+	,t_cb_inc_st.l_5
+	,t_cb_inc_st.l_6
+	,t_cb_inc_st.currency
+	,t_cb_inc_st.inc_base_mon 
+	,t_cb_inc_st.key_r_pc_l6
+HAVING (((sum(t_cb_inc_st.inc_total))<>0)) 
 UNION SELECT t_q_cb_exp.rep_month
 	,t_q_cb_exp.pc
 	,t_q_cb_exp.l_1
