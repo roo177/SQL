@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION q_cb_inc_mt() returns BOOLEAN AS
+CREATE OR REPLACE FUNCTION q_cb_inc_eur_mt() returns BOOLEAN AS
 $$
 BEGIN
 
@@ -8,22 +8,22 @@ BEGIN
 
 CREATE TABLE IF NOT EXISTS public.t_cb_inc_eur_st
 (
-    rep_month character varying(4) COLLATE pg_catalog.'default',
-    pc character varying(3) COLLATE pg_catalog.'default',
-    j_code character varying(255) COLLATE pg_catalog.'default',
-    desc_tr_l2 character varying(255) COLLATE pg_catalog.'default',
-    desc_tr_l3 character varying(255) COLLATE pg_catalog.'default',
+    rep_month character varying(4) COLLATE pg_catalog."default",
+    pc character varying(3) COLLATE pg_catalog."default",
+    j_code character varying(255) COLLATE pg_catalog."default",
+    desc_tr_l2 character varying(255) COLLATE pg_catalog."default",
+    desc_tr_l3 character varying(255) COLLATE pg_catalog."default",
     month timestamp with time zone,
     eur_income double precision,
-    up_curr_conv character varying(255) COLLATE pg_catalog.'default',
-    l_1 character varying(1) COLLATE pg_catalog.'default',
-    l_2 character varying(2) COLLATE pg_catalog.'default',
-    l_3 character varying(2) COLLATE pg_catalog.'default',
-    l_4 character varying(2) COLLATE pg_catalog.'default',
-    l_5 character varying(2) COLLATE pg_catalog.'default',
-    l_6 character varying(3) COLLATE pg_catalog.'default',
-    desc_tr_l6 character varying(150) COLLATE pg_catalog.'default',
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog.'default'
+    up_curr_conv character varying(255) COLLATE pg_catalog."default",
+    l_1 character varying(1) COLLATE pg_catalog."default",
+    l_2 character varying(2) COLLATE pg_catalog."default",
+    l_3 character varying(2) COLLATE pg_catalog."default",
+    l_4 character varying(2) COLLATE pg_catalog."default",
+    l_5 character varying(2) COLLATE pg_catalog."default",
+    l_6 character varying(3) COLLATE pg_catalog."default",
+    desc_tr_l6 character varying(150) COLLATE pg_catalog."default",
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default"
 )
 
 TABLESPACE pg_default;
