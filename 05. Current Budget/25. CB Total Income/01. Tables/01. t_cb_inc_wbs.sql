@@ -14,8 +14,17 @@ CREATE TABLE IF NOT EXISTS public.t_cb_inc_wbs
     c_l6 character varying(3) COLLATE pg_catalog."default" NOT NULL,
     currency character varying(3) COLLATE pg_catalog."default" NOT NULL,
     up numeric(18,9),
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default",
-    CONSTRAINT t_cb_inc_wbs_pkey PRIMARY KEY (rep_month, p01_code, c_l1, c_l2, c_l4, c_l3, c_l5, currency, c_l6)
+    CONSTRAINT t_cb_inc_wbs_pkey PRIMARY KEY (rep_month, p01_code, c_l1, c_l2, c_l4, c_l3, c_l5, currency, c_l6),
+    CONSTRAINT pcode FOREIGN KEY (p01_code)
+        REFERENCES public.t_001_projects (p_code) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT rep_month FOREIGN KEY (rep_month)
+        REFERENCES public.t_rep_month (rep_month) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
 )
 
 TABLESPACE pg_default;
