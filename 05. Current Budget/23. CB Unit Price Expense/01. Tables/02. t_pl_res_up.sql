@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS public.t_pl_res_up
     up_rs_l3 character varying(2) COLLATE pg_catalog."default" NOT NULL,
     up_rs_l4 character varying(3) COLLATE pg_catalog."default" NOT NULL,
     up_cost numeric(18,4),
+    key_r4 character varying(50) COLLATE pg_catalog."default",
+    key_r4_simple character varying(50) COLLATE pg_catalog."default",
     CONSTRAINT t_pl_res_up_pkey PRIMARY KEY (rep_month, up_pr_code, up_rs_l1, up_rs_l2, up_rs_l3, up_rs_l4),
     CONSTRAINT r__t_pl_re__r4_code FOREIGN KEY (up_rs_l4, up_rs_l2, up_rs_l1, up_rs_l3)
         REFERENCES public.r4_code (r_4_code, r_2_code, r_1_code, r_3_code) MATCH SIMPLE

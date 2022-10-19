@@ -1,6 +1,11 @@
 copy g_unit_prices_test from stdin with delimiter '&';
-
-
+copy t_cb_qty from stdin with delimiter '&';
+copy t_ac_exp from stdin with delimiter '&';
+copy t_pl_analysis from stdin with delimiter '&';
+copy t_pl_res_up from stdin with delimiter '&';
+copy t_cb_indexes from stdin with delimiter '&';
+copy t_cb_inc_wbs from stdin with delimiter '&';
+copy t_cb_inc_qty from stdin with delimiter '&';
 
 2205&NPH&D&08&01&42&03&006&1.11.2022 00:00:00&1.11.2022 00:00:00&EUR&7114.07&2205.NPH.D.08.01.42.03.006
 2205&NPH&D&08&01&42&03&006&1.12.2022 00:00:00&1.12.2022 00:00:00&EUR&7445.46&2205.NPH.D.08.01.42.03.006
@@ -13,3 +18,5 @@ copy g_unit_prices_test from stdin with delimiter '&';
 2205&NPH&D&08&01&42&03&006&1.7.2023 00:00:00&1.7.2023 00:00:00&EUR&10347.87&2205.NPH.D.08.01.42.03.006
 2205&NPH&D&08&01&42&03&006&1.8.2023 00:00:00&1.8.2023 00:00:00&EUR&10945.85&2205.NPH.D.08.01.42.03.006
 2205&NPH&D&08&01&42&03&006&1.9.2023 00:00:00&1.9.2023 00:00:00&EUR&11568.36&2205.NPH.D.08.01.42.03.006
+
+\.

@@ -22,7 +22,7 @@ CREATE OR REPLACE VIEW public."LastM_t_PL_Analysis"
     t_pl_analysis.rep_Month  ||  '.'  ||  t_pl_analysis.P01_Code  ||  '.' ||  t_pl_analysis.L_1  ||  '.'  ||  t_pl_analysis.L_2 ||  '.'  ||  t_pl_analysis.L_3  ||  '.'  ||  t_pl_analysis.L_4  ||  '.'  ||  t_pl_analysis.L_5  ||  '.'  ||  t_pl_analysis.L_6 AS "Key_R_PC_L6",
     t_pl_analysis.rep_Month  ||  '.'  ||  t_pl_analysis.P01_Code  ||  '.'  ||  t_pl_analysis.rs_L1  ||  '.'  ||  t_pl_analysis.rs_L2  ||  '.'  ||  t_pl_analysis.rs_L3  ||  '.'  ||  t_pl_analysis.rs_L4 AS "Key_R4",
     t_pl_analysis.rep_Month  || '.' ||  t_pl_analysis.P01_Code  ||  '.'  ||  t_pl_analysis.L_1  || '.' || t_pl_analysis.L_2 || '.' || t_pl_analysis.L_3 || '.' || t_pl_analysis.L_4 || '.' || t_pl_analysis.L_5 || '.' || t_pl_analysis.L_6 || '.' || t_pl_analysis.rs_L1 || '.' || t_pl_analysis.rs_L2 || '.' || t_pl_analysis.rs_L3 || '.' || t_pl_analysis.rs_L4 AS "Key_Full",
-    t_pl_analysis.r_loss AS "r_loss"
+    t_pl_analysis.r_loss A  S "r_loss"
   FROM t_pl_analysis
   WHERE t_pl_analysis.rep_month::text = '2207'::text
   ORDER BY t_pl_analysis.rep_month;

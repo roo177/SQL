@@ -16,6 +16,11 @@ CREATE TABLE IF NOT EXISTS public.t_bb_indexes
     p_code character varying(3) COLLATE pg_catalog."default" NOT NULL,
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT t_bb_indexes_pkey PRIMARY KEY (g_month, p_code, rep_month),
+    CONSTRAINT pcode FOREIGN KEY (p_code)
+        REFERENCES public.t_001_projects (p_code) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+        NOT VALID,
     CONSTRAINT r__t_bb_in__t_rep_m FOREIGN KEY (rep_month)
         REFERENCES public.t_rep_month (rep_month) MATCH SIMPLE
         ON UPDATE CASCADE

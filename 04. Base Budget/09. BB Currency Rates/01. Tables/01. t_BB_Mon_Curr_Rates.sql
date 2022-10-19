@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS public.t_bb_mon_curr_rates
 (
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
     p_code character varying(3) COLLATE pg_catalog."default" NOT NULL,
-    month timestamp with time zone NOT NULL,
+    month date NOT NULL,
     r_eur_eur numeric(12,6),
     r_eur_try numeric(12,6),
     r_eur_usd numeric(12,6),

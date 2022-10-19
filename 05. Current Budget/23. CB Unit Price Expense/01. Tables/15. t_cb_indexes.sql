@@ -5,7 +5,7 @@
 CREATE TABLE IF NOT EXISTS public.t_cb_indexes
 (
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
-    g_month timestamp with time zone NOT NULL,
+    g_month date NOT NULL,
     bb_metal numeric(18,4),
     bb_electricity numeric(18,4),
     bb_cement numeric(18,4),

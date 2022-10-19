@@ -4,14 +4,14 @@
 
 CREATE TABLE IF NOT EXISTS public.t_ac_bb_exp
 (
-    rep_month character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    pc character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    l_1 character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    l_2 character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    l_3 character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    l_4 character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    l_5 character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    l_6 character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
+    pc character varying(3) COLLATE pg_catalog."default" NOT NULL,
+    l_1 character varying(1) COLLATE pg_catalog."default" NOT NULL,
+    l_2 character varying(2) COLLATE pg_catalog."default" NOT NULL,
+    l_3 character varying(2) COLLATE pg_catalog."default" NOT NULL,
+    l_4 character varying(2) COLLATE pg_catalog."default" NOT NULL,
+    l_5 character varying(2) COLLATE pg_catalog."default" NOT NULL,
+    l_6 character varying(3) COLLATE pg_catalog."default" NOT NULL,
     exp_ac_mon date NOT NULL,
     exp_ac_exp numeric(20,2),
     up_curr character varying(255) COLLATE pg_catalog."default" NOT NULL,
@@ -20,13 +20,11 @@ CREATE TABLE IF NOT EXISTS public.t_ac_bb_exp
     CONSTRAINT pcode FOREIGN KEY (pc)
         REFERENCES public.t_001_projects (p_code) MATCH SIMPLE
         ON UPDATE CASCADE
-        ON DELETE RESTRICT
-        NOT VALID,
+        ON DELETE RESTRICT,
     CONSTRAINT repmonth FOREIGN KEY (rep_month)
         REFERENCES public.t_rep_month (rep_month) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-        NOT VALID
 )
 
 TABLESPACE pg_default;
