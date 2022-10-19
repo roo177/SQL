@@ -22,10 +22,10 @@ CREATE TABLE IF NOT EXISTS public.t_pl_analysis
     key_r_pc_l6 character varying(50) COLLATE pg_catalog."default",
     key_r4 character varying(50) COLLATE pg_catalog."default",
     key_full character varying(50) COLLATE pg_catalog."default",
-    r_loss numeric(7,5),
+    r_loss numeric(7,5) DEFAULT 0,
     CONSTRAINT t_pl_analysis_pkey PRIMARY KEY (p01_code, rs_l1, rs_l2, rs_l3, rs_l4, l_1, l_2, l_3, l_4, l_5, l_6, rep_month),
-    CONSTRAINT r__t_pl_an__c6_code FOREIGN KEY (l_5, l_4, l_2, l_3, l_6, l_1)
-        REFERENCES public.c6_code (c_l5, c_l4, c_l2, c_l3, c_l6, c_l1) MATCH SIMPLE
+    CONSTRAINT r__t_pl_an__c6_code FOREIGN KEY (l_1, l_3, l_2, l_5, l_6, l_4)
+        REFERENCES public.c6_code (c_l1, c_l3, c_l2, c_l5, c_l6, c_l4) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
     CONSTRAINT r__t_pl_an__r4_code FOREIGN KEY (rs_l1, rs_l2, rs_l4, rs_l3)
