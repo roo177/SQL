@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS public.t_bb_indexes
 (
-    g_month date NOT NULL,
+    month date NOT NULL,
     r_ufe numeric(7,5),
     r_tufe numeric(7,5),
     r_inf_usd numeric(7,5),
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS public.t_bb_indexes
     r_electricity numeric(7,5),
     p_code character varying(3) COLLATE pg_catalog."default" NOT NULL,
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT t_bb_indexes_pkey PRIMARY KEY (g_month, p_code, rep_month),
+    CONSTRAINT t_bb_indexes_pkey PRIMARY KEY (month, p_code, rep_month),
     CONSTRAINT pcode FOREIGN KEY (p_code)
         REFERENCES public.t_001_projects (p_code) MATCH SIMPLE
         ON UPDATE CASCADE

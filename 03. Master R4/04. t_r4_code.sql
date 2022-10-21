@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS public.r4_code
     administration character varying(50) COLLATE pg_catalog."default",
     admin_id character varying(50) COLLATE pg_catalog."default",
     r_loss numeric(7,5) DEFAULT 0,
-    key_r4_simple character varying(50) COLLATE pg_catalog."default",
+    key_r4_simple character varying(15) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((r_1_code)::text || '.'::text) || (r_2_code)::text) || '.'::text) || (r_3_code)::text) || '.'::text) || (r_4_code)::text)) STORED,
     CONSTRAINT r4_code_pkey PRIMARY KEY (r_1_code, r_2_code, r_3_code, r_4_code),
     CONSTRAINT r__r4_code__r1_code FOREIGN KEY (r_1_code)
         REFERENCES public.r1_code (r_1_code) MATCH SIMPLE

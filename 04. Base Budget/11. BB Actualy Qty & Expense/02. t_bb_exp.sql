@@ -1,8 +1,8 @@
--- Table: public.t_ac_bb_exp
+-- Table: public.t_bb_exp
 
--- DROP TABLE IF EXISTS public.t_ac_bb_exp;
+-- DROP TABLE IF EXISTS public.t_bb_exp;
 
-CREATE TABLE IF NOT EXISTS public.t_ac_bb_exp
+CREATE TABLE IF NOT EXISTS public.t_bb_exp
 (
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
     pc character varying(3) COLLATE pg_catalog."default" NOT NULL,
@@ -14,9 +14,14 @@ CREATE TABLE IF NOT EXISTS public.t_ac_bb_exp
     l_6 character varying(3) COLLATE pg_catalog."default" NOT NULL,
     exp_ac_mon date NOT NULL,
     exp_ac_exp numeric(20,2),
-    up_curr character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default",
-    CONSTRAINT t_ac_bb_exp_pkey PRIMARY KEY (rep_month, pc, l_1, l_2, l_3, l_4, l_5, l_6, up_curr, exp_ac_mon),
+    curr character varying(3) COLLATE pg_catalog."default" NOT NULL,
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((((((((((rep_month)::text || '.'::text) || (pc)::text) || '.'::text) || (l_1)::text) || '.'::text) || (l_2)::text) || '.'::text) || (l_3)::text) || '.'::text) || (l_4)::text) || '.'::text) || (l_5)::text) || '.'::text) || (l_6)::text)) STORED,
+    CONSTRAINT t_ac_bb_exp_pkey PRIMARY KEY (rep_month, pc, l_1, l_2, l_3, l_4, l_5, l_6, curr, exp_ac_mon),
+    CONSTRAINT l6 FOREIGN KEY (l_5, l_4, l_3, l_2, l_6, l_1)
+        REFERENCES public.c6_code (c_l5, c_l4, c_l3, c_l2, c_l6, c_l1) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+        NOT VALID,
     CONSTRAINT pcode FOREIGN KEY (pc)
         REFERENCES public.t_001_projects (p_code) MATCH SIMPLE
         ON UPDATE CASCADE
@@ -29,5 +34,5 @@ CREATE TABLE IF NOT EXISTS public.t_ac_bb_exp
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.t_ac_bb_exp
+ALTER TABLE IF EXISTS public.t_bb_exp
     OWNER to ictasadmin;
