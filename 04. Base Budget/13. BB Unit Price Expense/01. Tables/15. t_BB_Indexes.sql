@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS public.t_bb_indexes
     r_petrol numeric(7,5),
     r_cement numeric(7,5),
     r_electricity numeric(7,5),
-    p_code character varying(3) COLLATE pg_catalog."default" NOT NULL,
+    pc character varying(3) COLLATE pg_catalog."default" NOT NULL,
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT t_bb_indexes_pkey PRIMARY KEY (month, p_code, rep_month),
-    CONSTRAINT pcode FOREIGN KEY (p_code)
+    CONSTRAINT t_bb_indexes_pkey PRIMARY KEY (month, pc, rep_month),
+    CONSTRAINT pcode FOREIGN KEY (pc)
         REFERENCES public.t_001_projects (p_code) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE RESTRICT

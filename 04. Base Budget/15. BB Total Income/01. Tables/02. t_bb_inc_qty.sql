@@ -19,6 +19,14 @@ CREATE TABLE IF NOT EXISTS public.t_bb_inc_qty
     CONSTRAINT l6 FOREIGN KEY (l_5, l_4, l_2, l_3, l_6, l_1)
         REFERENCES public.c6_code (c_l5, c_l4, c_l2, c_l3, c_l6, c_l1) MATCH SIMPLE
         ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT r__t_bb_in__t_001_p FOREIGN KEY (pc)
+        REFERENCES public.t_001_projects (p_code) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT r__t_bb_in__t_rep_m FOREIGN KEY (rep_month)
+        REFERENCES public.t_rep_month (rep_month) MATCH SIMPLE
+        ON UPDATE CASCADE
         ON DELETE RESTRICT
 )
 

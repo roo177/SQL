@@ -133,3 +133,27 @@ add column key_r4_simple varchar(15) generated always as ( "rs_l1" || '.' || "rs
 
 alter table t_cb_res_up
 add column key_r4 varchar(25) generated always as ( "rep_month" || '.' || "pc" || '.' || "rs_l1" || '.' || "rs_l2" || '.' || "rs_l3" || '.' || "rs_l4") STORED;
+
+
+
+
+alter table mon_curr_rates
+add column r_eur_eur numeric(2,1) generated always as (1) STORED;
+
+alter table mon_curr_rates
+add column r_eur_usd numeric(18,12) generated always as ("r_eur_try"/"r_usd_try") STORED;
+
+alter table mon_curr_rates
+add column r_try_eur numeric(12,6) generated always as (1/"r_eur_try") STORED;
+
+alter table mon_curr_rates
+add column r_try_try numeric(2,1) generated always as (1) STORED;
+
+alter table mon_curr_rates
+add column r_usd_usd numeric(2,1) generated always as (1) STORED;
+
+alter table mon_curr_rates
+add column r_usd_eur numeric(18,12) generated always as ("r_usd_try"/"r_eur_try") STORED;
+
+alter table mon_curr_rates
+add column r_try_usd numeric(18,12) generated always as (1/"r_usd_try") STORED;
