@@ -1,5 +1,14 @@
-CREATE OR REPLACE FUNCTION q_cb_inc_eur_mt() returns BOOLEAN AS
-$$
+-- FUNCTION: public.q_cb_inc_eur_mt()
+
+DROP FUNCTION IF EXISTS public.q_cb_inc_eur_mt();
+
+CREATE OR REPLACE FUNCTION public.q_cb_inc_eur_mt(
+	)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
 BEGIN
 
 -- Table: public.t_cb_inc_eur_st
@@ -28,13 +37,12 @@ CREATE TABLE IF NOT EXISTS public.t_cb_inc_eur_st
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.t_cb_inc_eur_st
-    OWNER to ictasadmin;
+--ALTER TABLE IF EXISTS public.t_cb_inc_eur_st
+--    OWNER to ictasadmin;
 
 Raise notice 'Deleting existing data';
 Delete from t_cb_inc_eur_st;
 Raise notice 'Appending new data';
-
 
 Insert into t_cb_inc_eur_st
 
@@ -75,9 +83,10 @@ q_cb_inc_eur.l_6,
 c6_code.desc_tr_l6, 
 q_cb_inc_eur.key_r_pc_l6;
 
-
 RETURN TRUE;
 End;
 
-$$
-language plpgsql;
+$BODY$;
+
+--ALTER FUNCTION public.q_cb_inc_eur_mt()
+--    OWNER TO ictasadmin;

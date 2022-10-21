@@ -1,5 +1,14 @@
-CREATE OR REPLACE FUNCTION q_cb_profit_usd_mt() returns BOOLEAN AS
-$$
+-- FUNCTION: public.q_cb_profit_usd_mt()
+
+DROP FUNCTION IF EXISTS public.q_cb_profit_usd_mt();
+
+CREATE OR REPLACE FUNCTION public.q_cb_profit_usd_mt(
+	)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
 BEGIN
 
 -- Table: t_cb_profit_usd_st
@@ -15,7 +24,7 @@ CREATE TABLE IF NOT EXISTS t_cb_profit_usd_st
     desc_tr_l3 character varying(255) COLLATE pg_catalog."default",
     expense double precision,
     income double precision,
-    month timestamp with time zone,
+    month date,
     curr character varying(3) COLLATE pg_catalog."default",
     l_1 character varying(1) COLLATE pg_catalog."default",
     l_2 character varying(2) COLLATE pg_catalog."default",
@@ -30,8 +39,8 @@ CREATE TABLE IF NOT EXISTS t_cb_profit_usd_st
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS t_cb_profit_usd_st
-    OWNER to ictasadmin;
+--ALTER TABLE IF EXISTS t_cb_profit_usd_st
+--    OWNER to ictasadmin;
 
 Insert into t_cb_profit_usd_st
 
@@ -77,5 +86,7 @@ q_cb_profit_usd.key_r_pc_l6;
 RETURN TRUE;
 End;
 
-$$
-language plpgsql;
+$BODY$;
+
+--ALTER FUNCTION public.q_cb_profit_usd_mt()
+--    OWNER TO ictasadmin;

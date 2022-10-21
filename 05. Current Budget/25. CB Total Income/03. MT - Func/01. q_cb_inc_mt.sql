@@ -1,6 +1,6 @@
 -- FUNCTION: public.q_cb_inc_mt()
 
--- DROP FUNCTION IF EXISTS public.q_cb_inc_mt();
+DROP FUNCTION IF EXISTS public.q_cb_inc_mt();
 
 CREATE OR REPLACE FUNCTION public.q_cb_inc_mt(
 	)
@@ -11,7 +11,8 @@ CREATE OR REPLACE FUNCTION public.q_cb_inc_mt(
 AS $BODY$
 BEGIN
 
-DROP TABLE IF EXISTS public.t_cb_inc_st;
+--DROP TABLE IF EXISTS public.t_cb_inc_st;
+
 CREATE TABLE IF NOT EXISTS public.t_cb_inc_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
@@ -34,8 +35,8 @@ CREATE TABLE IF NOT EXISTS public.t_cb_inc_st
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.t_cb_inc_st
-    OWNER to ictasadmin;
+--ALTER TABLE IF EXISTS public.t_cb_inc_st
+--    OWNER to ictasadmin;
 
 Raise notice 'Deleting existing data';
 Delete from t_cb_inc_st;
@@ -85,5 +86,5 @@ End;
 
 $BODY$;
 
-ALTER FUNCTION public.q_cb_inc_mt()
-    OWNER TO ictasadmin;
+--ALTER FUNCTION public.q_cb_inc_mt()
+--   OWNER TO ictasadmin;

@@ -1,6 +1,6 @@
 -- FUNCTION: public.q_cb_exp_mt()
 
--- DROP FUNCTION IF EXISTS public.q_cb_exp_mt();
+DROP FUNCTION IF EXISTS public.q_cb_exp_mt();
 
 CREATE OR REPLACE FUNCTION public.q_cb_exp_mt(
 	)
@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.q_cb_exp_mt(
 AS $BODY$
 BEGIN
 
-DROP TABLE IF EXISTS public.t_cb_exp_st;
+--DROP TABLE IF EXISTS public.t_cb_exp_st;
 
 CREATE TABLE IF NOT EXISTS public.t_cb_exp_st
 (
@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS public.t_cb_exp_st
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.t_cb_exp_st
-OWNER to ictasadmin;
+--ALTER TABLE IF EXISTS public.t_cb_exp_st
+--OWNER to ictasadmin;
 
 Raise notice 'Deleting existing data';
 Delete from t_cb_exp_st;
@@ -65,5 +65,5 @@ End;
 
 $BODY$;
 
-ALTER FUNCTION public.q_cb_exp_mt()
-    OWNER TO ictasadmin;
+--ALTER FUNCTION public.q_cb_exp_mt()
+--    OWNER TO ictasadmin;

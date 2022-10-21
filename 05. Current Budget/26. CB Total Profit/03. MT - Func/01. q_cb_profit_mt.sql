@@ -1,5 +1,14 @@
-CREATE OR REPLACE FUNCTION q_cb_profit_mt() returns BOOLEAN AS
-$$
+-- FUNCTION: public.q_cb_profit_mt()
+
+DROP FUNCTION IF EXISTS public.q_cb_profit_mt();
+
+CREATE OR REPLACE FUNCTION public.q_cb_profit_mt(
+	)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
 BEGIN
 
 -- Table: t_cb_profit_st
@@ -30,8 +39,8 @@ CREATE TABLE IF NOT EXISTS t_cb_profit_st
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS t_cb_profit_st
-    OWNER to ictasadmin;
+--ALTER TABLE IF EXISTS t_cb_profit_st
+--    OWNER to ictasadmin;
 
 Insert into t_cb_profit_st
 
@@ -80,5 +89,7 @@ q_cb_profit.key_r_pc_l6;
 RETURN TRUE;
 End;
 
-$$
-language plpgsql;
+$BODY$;
+
+--ALTER FUNCTION public.q_cb_profit_mt()
+--    OWNER TO ictasadmin;

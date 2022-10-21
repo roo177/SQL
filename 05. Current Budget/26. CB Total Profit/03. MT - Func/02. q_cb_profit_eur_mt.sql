@@ -1,3 +1,8 @@
+-- FUNCTION: public.q_cb_profit_eur_mt()
+
+DROP FUNCTION IF EXISTS public.q_cb_profit_eur_mt();
+
+
 CREATE OR REPLACE FUNCTION q_cb_profit_eur_mt() returns BOOLEAN AS
 $$
 BEGIN
@@ -30,8 +35,8 @@ CREATE TABLE IF NOT EXISTS t_cb_profit_eur_st
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS t_cb_profit_eur_st
-    OWNER to ictasadmin;
+--ALTER TABLE IF EXISTS t_cb_profit_eur_st
+--    OWNER to ictasadmin;
 
 Insert into t_cb_profit_eur_st
 
@@ -79,3 +84,6 @@ End;
 
 $$
 language plpgsql;
+
+--ALTER FUNCTION public.q_cb_profit_eur_mt()
+ --   OWNER TO ictasadmin;
