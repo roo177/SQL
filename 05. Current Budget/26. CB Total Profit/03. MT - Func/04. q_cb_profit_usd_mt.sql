@@ -42,6 +42,10 @@ TABLESPACE pg_default;
 --ALTER TABLE IF EXISTS t_cb_profit_usd_st
 --    OWNER to ictasadmin;
 
+Raise notice 'Deleting existing data';
+Delete from t_cb_profit_usd_st;
+Raise notice 'Appending new data';
+
 Insert into t_cb_profit_usd_st
 
 select 
