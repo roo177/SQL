@@ -1,32 +1,26 @@
+-- FUNCTION: public.q_cb_calculate_budget()
 
-CREATE OR REPLACE FUNCTION public.q_cb_calculate_budget(
-	)
-    RETURNS boolean
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
+DROP FUNCTION IF EXISTS public.q_cb_calculate_budget();
+
+CREATE OR REPLACE FUNCTION public.q_cb_calculate_budget()
+RETURNS void AS $$
 BEGIN
 
-select q_cb_exp_mt();
-select q_cb_exp_eur_mt();
-select q_cb_exp_try_mt();
-select q_cb_exp_usd_mt();
+PERFORM q_cb_exp_mt();
+PERFORM q_cb_exp_eur_mt();
+PERFORM q_cb_exp_try_mt();
+PERFORM q_cb_exp_usd_mt();
 
-select q_cb_inc_mt();
-select q_cb_inc_eur_mt();
-select q_cb_inc_try_mt();
-select q_cb_inc_usd_mt();
+PERFORM q_cb_inc_mt();
+PERFORM q_cb_inc_eur_mt();
+PERFORM q_cb_inc_try_mt();
+PERFORM q_cb_inc_usd_mt();
 
-select q_cb_profit_mt();
-select q_cb_profit_eur_mt();
-select q_cb_profit_try_mt();
-select q_cb_profit_usd_mt();
+PERFORM q_cb_profit_mt();
+PERFORM q_cb_profit_eur_mt();
+PERFORM q_cb_profit_try_mt();
+PERFORM q_cb_profit_usd_mt();
 
-RETURN TRUE;
-End;
+END; $$
+LANGUAGE 'plpgsql';
 
-$BODY$;
-
-ALTER FUNCTION public.q_cb_calculate_budget()
-    OWNER TO ictasadmin;
