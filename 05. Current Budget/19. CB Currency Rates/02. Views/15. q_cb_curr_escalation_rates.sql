@@ -35,7 +35,7 @@ CREATE OR REPLACE VIEW public.q_cb_curr_escalation_rates
         END AS k_eur,
     r4_code.w_inf_usd,
     r4_code.w_inf_eur,
-    r4_code.currency AS rs_currency,
+    r4_code.currency AS curr,
     q_cb_active_months_res_qty.key_r4_simple,
     q_cb_active_months_res_qty.key_full,
     q_cb_active_months_res_qty.key_r_pc_l6,

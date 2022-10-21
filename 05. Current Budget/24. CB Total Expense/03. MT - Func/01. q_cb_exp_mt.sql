@@ -1,8 +1,18 @@
-CREATE OR REPLACE FUNCTION q_cb_exp_mt() returns BOOLEAN AS
-$$
+-- FUNCTION: public.q_cb_exp_mt()
+
+-- DROP FUNCTION IF EXISTS public.q_cb_exp_mt();
+
+CREATE OR REPLACE FUNCTION public.q_cb_exp_mt(
+	)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
 BEGIN
 
---DROP TABLE IF EXISTS public.t_cb_exp_st;
+DROP TABLE IF EXISTS public.t_cb_exp_st;
+
 CREATE TABLE IF NOT EXISTS public.t_cb_exp_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
@@ -10,9 +20,9 @@ CREATE TABLE IF NOT EXISTS public.t_cb_exp_st
     j_code character varying(50) COLLATE pg_catalog."default",
     desc_tr_l2 character varying(255) COLLATE pg_catalog."default",
     desc_tr_l3 character varying(255) COLLATE pg_catalog."default",
-    month timestamp with time zone,
+    month date,
     total_expense double precision,
-    up_curr character varying(3) COLLATE pg_catalog."default",
+    curr character varying(3) COLLATE pg_catalog."default",
     l_1 character varying(1) COLLATE pg_catalog."default",
     l_2 character varying(2) COLLATE pg_catalog."default",
     l_3 character varying(2) COLLATE pg_catalog."default",
@@ -25,7 +35,7 @@ CREATE TABLE IF NOT EXISTS public.t_cb_exp_st
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_cb_exp_st
-    OWNER to ictasadmin;
+OWNER to ictasadmin;
 
 Raise notice 'Deleting existing data';
 Delete from t_cb_exp_st;
@@ -33,13 +43,13 @@ Raise notice 'Appending new data';
 
 Insert into t_cb_exp_st
 select q_cb_exp.rep_month, 
-q_cb_exp.p01_code as pc, 
+q_cb_exp.pc as pc, 
 l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6 as j_code, 
 c2_code.desc_tr_l2, 
 c3_code.desc_tr_l3, 
 q_cb_exp.month, 
 sum(q_cb_exp.total_expense) as total_expense, 
-q_cb_exp.up_curr, 
+q_cb_exp.curr, 
 q_cb_exp.l_1, 
 q_cb_exp.l_2, 
 q_cb_exp.l_3, 
@@ -48,10 +58,12 @@ q_cb_exp.l_5,
 q_cb_exp.l_6, 
 q_cb_exp.key_r_pc_l6
 from q_cb_exp left join (c2_code right join c3_code on (c2_code.c_l1 = c3_code.c_l1) and (c2_code.c_l2 = c3_code.c_l2)) on (q_cb_exp.l_1 = c3_code.c_l1) and (q_cb_exp.l_2 = c3_code.c_l2) and (q_cb_exp.l_3 = c3_code.c_l3)
-group by q_cb_exp.rep_month, q_cb_exp.p01_code, l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6, c2_code.desc_tr_l2, c3_code.desc_tr_l3, q_cb_exp.month, q_cb_exp.up_curr, q_cb_exp.l_1, q_cb_exp.l_2, q_cb_exp.l_3, q_cb_exp.l_4, q_cb_exp.l_5, q_cb_exp.l_6, q_cb_exp.key_r_pc_l6;
+group by q_cb_exp.rep_month, q_cb_exp.pc, l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6, c2_code.desc_tr_l2, c3_code.desc_tr_l3, q_cb_exp.month, q_cb_exp.curr, q_cb_exp.l_1, q_cb_exp.l_2, q_cb_exp.l_3, q_cb_exp.l_4, q_cb_exp.l_5, q_cb_exp.l_6, q_cb_exp.key_r_pc_l6;
 
 RETURN TRUE;
 End;
 
-$$
-language plpgsql;
+$BODY$;
+
+ALTER FUNCTION public.q_cb_exp_mt()
+    OWNER TO ictasadmin;

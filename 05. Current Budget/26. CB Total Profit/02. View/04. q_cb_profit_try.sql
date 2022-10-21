@@ -13,7 +13,7 @@ CREATE OR REPLACE VIEW public.q_cb_profit_try
     t_cb_profit_st.l_5,
     t_cb_profit_st.l_6,
     t_cb_profit_st.month,
-    'TRY'::text AS currency,
+    'TRY'::text AS curr,
     s1.income,
     s1.expense,
     s1.income - s1.expense AS profit,
@@ -22,18 +22,18 @@ CREATE OR REPLACE VIEW public.q_cb_profit_try
      LEFT JOIN mon_curr_rates ON t_cb_profit_st.rep_month::text = mon_curr_rates.rep_month::text AND t_cb_profit_st.month = mon_curr_rates.month,
     LATERAL ( SELECT
                 CASE
-                    WHEN t_cb_profit_st.currency::text = 'USD'::text THEN t_cb_profit_st.income * mon_curr_rates.r_usd_try::double precision
+                    WHEN t_cb_profit_st.curr::text = 'USD'::text THEN t_cb_profit_st.income * mon_curr_rates.r_usd_try::double precision
                     ELSE
                     CASE
-                        WHEN t_cb_profit_st.currency::text = 'EUR'::text THEN t_cb_profit_st.income * mon_curr_rates.r_eur_try::double precision
+                        WHEN t_cb_profit_st.curr::text = 'EUR'::text THEN t_cb_profit_st.income * mon_curr_rates.r_eur_try::double precision
                         ELSE t_cb_profit_st.income
                     END
                 END AS income,
                 CASE
-                    WHEN t_cb_profit_st.currency::text = 'USD'::text THEN t_cb_profit_st.expense * mon_curr_rates.r_usd_try::double precision
+                    WHEN t_cb_profit_st.curr::text = 'USD'::text THEN t_cb_profit_st.expense * mon_curr_rates.r_usd_try::double precision
                     ELSE
                     CASE
-                        WHEN t_cb_profit_st.currency::text = 'EUR'::text THEN t_cb_profit_st.expense * mon_curr_rates.r_eur_try::double precision
+                        WHEN t_cb_profit_st.curr::text = 'EUR'::text THEN t_cb_profit_st.expense * mon_curr_rates.r_eur_try::double precision
                         ELSE t_cb_profit_st.expense
                     END
                 END AS expense) s1(income, expense)

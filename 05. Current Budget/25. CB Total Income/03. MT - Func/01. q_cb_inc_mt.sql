@@ -1,8 +1,17 @@
-CREATE OR REPLACE FUNCTION q_cb_inc_mt() returns BOOLEAN AS
-$$
+-- FUNCTION: public.q_cb_inc_mt()
+
+-- DROP FUNCTION IF EXISTS public.q_cb_inc_mt();
+
+CREATE OR REPLACE FUNCTION public.q_cb_inc_mt(
+	)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
 BEGIN
 
---DROP TABLE IF EXISTS public.t_cb_inc_st;
+DROP TABLE IF EXISTS public.t_cb_inc_st;
 CREATE TABLE IF NOT EXISTS public.t_cb_inc_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
@@ -10,9 +19,9 @@ CREATE TABLE IF NOT EXISTS public.t_cb_inc_st
     j_code character varying(255) COLLATE pg_catalog."default",
     desc_tr_l2 character varying(255) COLLATE pg_catalog."default",
     desc_tr_l3 character varying(255) COLLATE pg_catalog."default",
-    inc_base_mon timestamp with time zone,
+    inc_base_mon date,
     inc_total double precision,
-    currency character varying(3) COLLATE pg_catalog."default",
+    curr character varying(3) COLLATE pg_catalog."default",
     l_1 character varying(1) COLLATE pg_catalog."default",
     l_2 character varying(2) COLLATE pg_catalog."default",
     l_3 character varying(2) COLLATE pg_catalog."default",
@@ -23,7 +32,6 @@ CREATE TABLE IF NOT EXISTS public.t_cb_inc_st
     key_r_pc_l6 character varying(50) COLLATE pg_catalog."default"
 )
 
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_cb_inc_st
@@ -33,9 +41,7 @@ Raise notice 'Deleting existing data';
 Delete from t_cb_inc_st;
 Raise notice 'Appending new data';
 
-
 Insert into t_cb_inc_st
-
 
 SELECT 
 q_cb_inc.rep_month, 
@@ -44,7 +50,7 @@ c2_code.desc_tr_l2,
 c3_code.desc_tr_l3, 
 q_cb_inc.inc_base_mon, 
 sum(q_cb_inc.inc_total) AS inc_total, 
-q_cb_inc.currency, 
+q_cb_inc.curr, 
 q_cb_inc.l_1, 
 q_cb_inc.l_2, 
 q_cb_inc.l_3, 
@@ -64,7 +70,7 @@ l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6,
 c2_code.desc_tr_l2,
 c3_code.desc_tr_l3, 
 q_cb_inc.inc_base_mon, 
-q_cb_inc.currency, 
+q_cb_inc.curr, 
 q_cb_inc.l_1, 
 q_cb_inc.l_2, 
 q_cb_inc.l_3, 
@@ -77,5 +83,7 @@ q_cb_inc.key_r_pc_l6;
 RETURN TRUE;
 End;
 
-$$
-language plpgsql;
+$BODY$;
+
+ALTER FUNCTION public.q_cb_inc_mt()
+    OWNER TO ictasadmin;

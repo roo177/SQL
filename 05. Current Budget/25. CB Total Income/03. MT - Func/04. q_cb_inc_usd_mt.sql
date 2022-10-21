@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS public.t_cb_inc_usd_st
     j_code character varying(255) COLLATE pg_catalog."default",
     desc_tr_l2 character varying(255) COLLATE pg_catalog."default",
     desc_tr_l3 character varying(255) COLLATE pg_catalog."default",
-    month timestamp with time zone,
+    month date,
     usd_income double precision,
     up_curr_conv character varying(255) COLLATE pg_catalog."default",
     l_1 character varying(1) COLLATE pg_catalog."default",

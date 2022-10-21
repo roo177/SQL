@@ -14,12 +14,12 @@ CREATE OR REPLACE VIEW public.q_cb_exp_eur
     t_cb_exp_st.l_6,
     t_cb_exp_st.month,
     t_cb_exp_st.total_expense,
-    t_cb_exp_st.up_curr,
+    t_cb_exp_st.curr,
         CASE
-            WHEN t_cb_exp_st.up_curr::text = 'EUR'::text THEN t_cb_exp_st.total_expense
+            WHEN t_cb_exp_st.curr::text = 'EUR'::text THEN t_cb_exp_st.total_expense
             ELSE
             CASE
-                WHEN t_cb_exp_st.up_curr::text = 'USD'::text THEN t_cb_exp_st.total_expense * mon_curr_rates.r_usd_eur::double precision
+                WHEN t_cb_exp_st.curr::text = 'USD'::text THEN t_cb_exp_st.total_expense * mon_curr_rates.r_usd_eur::double precision
                 ELSE t_cb_exp_st.total_expense * mon_curr_rates.r_try_eur::double precision
             END
         END AS eur_expense,

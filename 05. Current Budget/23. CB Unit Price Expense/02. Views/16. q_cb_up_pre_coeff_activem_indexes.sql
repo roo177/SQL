@@ -25,7 +25,7 @@ CREATE OR REPLACE VIEW public.q_cb_up_pre_coeff_activem_indexes
     t_cb_indexes.bb_petrol,
     t_cb_indexes.bb_cement,
     t_cb_indexes.bb_electricity,
-    q_cb_analysis_activem_with_prices.currency AS rs_currency,
+    q_cb_analysis_activem_with_prices.curr,
     q_cb_analysis_activem_with_prices.an_rs_quantity,
     q_cb_analysis_activem_with_prices.up_cost,
     q_cb_analysis_activem_with_prices.key_r4_simple,
@@ -33,7 +33,7 @@ CREATE OR REPLACE VIEW public.q_cb_up_pre_coeff_activem_indexes
     q_cb_analysis_activem_with_prices.key_r_pc_l6,
     q_cb_analysis_activem_with_prices.key_full
    FROM q_cb_analysis_activem_with_prices
-     LEFT JOIN t_cb_indexes ON q_cb_analysis_activem_with_prices.exp_cb_mon = t_cb_indexes.g_month AND q_cb_analysis_activem_with_prices.rep_month::text = t_cb_indexes.rep_month::text;
+     LEFT JOIN t_cb_indexes ON q_cb_analysis_activem_with_prices.exp_cb_mon = t_cb_indexes.month AND q_cb_analysis_activem_with_prices.rep_month::text = t_cb_indexes.rep_month::text;
 
 ALTER TABLE public.q_cb_up_pre_coeff_activem_indexes
     OWNER TO ictasadmin;

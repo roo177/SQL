@@ -28,8 +28,9 @@ CREATE TABLE IF NOT EXISTS public.t_bb_exp
         ON DELETE RESTRICT,
     CONSTRAINT repmonth FOREIGN KEY (rep_month)
         REFERENCES public.t_rep_month (rep_month) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+        NOT VALID
 )
 
 TABLESPACE pg_default;

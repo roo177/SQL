@@ -1,10 +1,17 @@
-DROP FUNCTION IF EXISTS public.q_cb_exp_usd_mt();
+-- FUNCTION: public.q_cb_exp_usd_mt()
 
-CREATE OR REPLACE FUNCTION q_cb_exp_usd_mt() returns BOOLEAN AS
-$$
+-- DROP FUNCTION IF EXISTS public.q_cb_exp_usd_mt();
+
+CREATE OR REPLACE FUNCTION public.q_cb_exp_usd_mt(
+	)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
 BEGIN
 
---DROP TABLE IF EXISTS public.t_cb_exp_usd_st;
+DROP TABLE IF EXISTS public.t_cb_exp_usd_st;
 
 CREATE TABLE IF NOT EXISTS public.t_cb_exp_usd_st
 (
@@ -13,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.t_cb_exp_usd_st
     j_code character varying(50) COLLATE pg_catalog."default",
     desc_tr_l2 character varying(255) COLLATE pg_catalog."default",
     desc_tr_l3 character varying(255) COLLATE pg_catalog."default",
-    month timestamp with time zone,
+    month date,
     usd_expense double precision,
     up_curr_conv character varying(3) COLLATE pg_catalog."default",
     l_1 character varying(1) COLLATE pg_catalog."default",
@@ -56,6 +63,7 @@ group by q_cb_exp_usd.rep_month, q_cb_exp_usd.pc, l_1 || '.' || l_2 || '.' || l_
 RETURN TRUE;
 End;
 
-$$
-language plpgsql;
+$BODY$;
 
+ALTER FUNCTION public.q_cb_exp_usd_mt()
+    OWNER TO ictasadmin;

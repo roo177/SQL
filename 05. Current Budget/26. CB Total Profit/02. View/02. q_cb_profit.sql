@@ -12,15 +12,15 @@ CREATE OR REPLACE VIEW public.q_cb_profit
     q_cb_pr_wbs.l_4,
     q_cb_pr_wbs.l_5,
     q_cb_pr_wbs.l_6,
-    q_cb_pr_wbs.currency,
+    q_cb_pr_wbs.curr,
     q_cb_pr_wbs.month,
     s1.income,
     s1.expense,
     s1.income - s1.expense AS profit,
     q_cb_pr_wbs.key_r_pc_l6
    FROM q_cb_pr_wbs
-     LEFT JOIN t_cb_inc_st ON q_cb_pr_wbs.key_r_pc_l6::text = t_cb_inc_st.key_r_pc_l6::text AND q_cb_pr_wbs.month = t_cb_inc_st.inc_base_mon AND q_cb_pr_wbs.currency::text = t_cb_inc_st.currency::text
-     LEFT JOIN t_cb_exp_st ON q_cb_pr_wbs.key_r_pc_l6::text = t_cb_exp_st.key_r_pc_l6::text AND q_cb_pr_wbs.month = t_cb_exp_st.month AND q_cb_pr_wbs.currency::text = t_cb_exp_st.up_curr::text,
+     LEFT JOIN t_cb_inc_st ON q_cb_pr_wbs.key_r_pc_l6::text = t_cb_inc_st.key_r_pc_l6::text AND q_cb_pr_wbs.month = t_cb_inc_st.inc_base_mon AND q_cb_pr_wbs.curr::text = t_cb_inc_st.curr::text
+     LEFT JOIN t_cb_exp_st ON q_cb_pr_wbs.key_r_pc_l6::text = t_cb_exp_st.key_r_pc_l6::text AND q_cb_pr_wbs.month = t_cb_exp_st.month AND q_cb_pr_wbs.curr::text = t_cb_exp_st.curr::text,
     LATERAL ( SELECT
                 CASE
                     WHEN t_cb_inc_st.inc_total IS NULL THEN 0::double precision

@@ -13,12 +13,12 @@ CREATE OR REPLACE VIEW public.q_cb_inc_eur
     t_cb_inc_st.l_5,
     t_cb_inc_st.l_6,
     t_cb_inc_st.inc_total,
-    t_cb_inc_st.currency,
+    t_cb_inc_st.curr,
         CASE
-            WHEN t_cb_inc_st.currency::text = 'EUR'::text THEN t_cb_inc_st.inc_total
+            WHEN t_cb_inc_st.curr::text = 'EUR'::text THEN t_cb_inc_st.inc_total
             ELSE
             CASE
-                WHEN t_cb_inc_st.currency::text = 'USD'::text THEN t_cb_inc_st.inc_total * mon_curr_rates.r_usd_eur::double precision
+                WHEN t_cb_inc_st.curr::text = 'USD'::text THEN t_cb_inc_st.inc_total * mon_curr_rates.r_usd_eur::double precision
                 ELSE t_cb_inc_st.inc_total * mon_curr_rates.r_try_eur::double precision
             END
         END AS eur_income,
