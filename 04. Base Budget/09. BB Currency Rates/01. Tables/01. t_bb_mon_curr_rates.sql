@@ -1,6 +1,6 @@
 -- Table: public.t_bb_mon_curr_rates
 
--- DROP TABLE IF EXISTS public.t_bb_mon_curr_rates;
+DROP TABLE IF EXISTS public.t_bb_mon_curr_rates;
 
 CREATE TABLE IF NOT EXISTS public.t_bb_mon_curr_rates
 (
@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS public.t_bb_mon_curr_rates
     month date NOT NULL,
     r_eur_try numeric(12,6),
     r_usd_try numeric(12,6),
-    r_eur_eur numeric(12,6) GENERATED ALWAYS AS (1) STORED,
+    r_eur_eur numeric(2,1) GENERATED ALWAYS AS (1) STORED,
     r_try_eur numeric(12,6) GENERATED ALWAYS AS (((1)::numeric / r_eur_try)) STORED,
-    r_try_try numeric(12,6) GENERATED ALWAYS AS (1) STORED,
-    r_usd_usd numeric(12,6) GENERATED ALWAYS AS (1) STORED,
+    r_try_try numeric(2,1) GENERATED ALWAYS AS (1) STORED,
+    r_usd_usd numeric(2,1) GENERATED ALWAYS AS (1) STORED,
     r_try_usd numeric(12,6) GENERATED ALWAYS AS (((1)::numeric / r_usd_try)) STORED,
     r_eur_usd numeric(12,6) GENERATED ALWAYS AS ((r_eur_try / r_usd_try)) STORED,
     r_usd_eur numeric(12,6) GENERATED ALWAYS AS ((r_usd_try / r_eur_try)) STORED,
