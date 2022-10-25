@@ -1,6 +1,6 @@
 -- FUNCTION: public.q_bb_exp_mt()
 
--- DROP FUNCTION IF EXISTS public.q_bb_exp_mt();
+DROP FUNCTION IF EXISTS public.q_bb_exp_mt();
 
 CREATE OR REPLACE FUNCTION public.q_bb_exp_mt(
 	)
@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION public.q_bb_exp_mt(
 AS $BODY$
 BEGIN
 
-DROP TABLE IF EXISTS public.t_bb_exp_st;
+-- DROP TABLE IF EXISTS public.t_bb_exp_st;
 
 CREATE TABLE IF NOT EXISTS public.t_bb_exp_st
 (
