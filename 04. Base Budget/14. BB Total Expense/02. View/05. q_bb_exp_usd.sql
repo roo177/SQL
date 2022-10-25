@@ -1,8 +1,8 @@
--- View: public.q_bb_exp_eur
+-- View: public.q_bb_exp_usd
 
-DROP VIEW public.q_bb_exp_eur;
+-- DROP VIEW public.q_bb_exp_usd;
 
-CREATE OR REPLACE VIEW public.q_bb_exp_eur
+CREATE OR REPLACE VIEW public.q_bb_exp_usd
  AS
  SELECT t_bb_exp_st.rep_month,
     t_bb_exp_st.pc,
@@ -16,18 +16,17 @@ CREATE OR REPLACE VIEW public.q_bb_exp_eur
     t_bb_exp_st.total_expense,
     t_bb_exp_st.curr,
         CASE
-            WHEN t_bb_exp_st.curr::text = 'EUR'::text THEN t_bb_exp_st.total_expense
+            WHEN t_bb_exp_st.curr::text = 'USD'::text THEN t_bb_exp_st.total_expense
             ELSE
             CASE
-                WHEN t_bb_exp_st.curr::text = 'USD'::text THEN t_bb_exp_st.total_expense * t_bb_mon_curr_rates.r_usd_eur::double precision
-                ELSE t_bb_exp_st.total_expense * t_bb_mon_curr_rates.r_try_eur::double precision
+                WHEN t_bb_exp_st.curr::text = 'EUR'::text THEN t_bb_exp_st.total_expense * t_bb_mon_curr_rates.r_eur_usd::double precision
+                ELSE t_bb_exp_st.total_expense * t_bb_mon_curr_rates.r_try_usd::double precision
             END
-        END AS eur_expense,
-    'EUR'::text AS up_curr_conv,
+        END AS usd_expense,
+    'USD'::text AS up_curr_conv,
     t_bb_exp_st.key_r_pc_l6
    FROM t_bb_exp_st
      LEFT JOIN t_bb_mon_curr_rates ON t_bb_exp_st.month = t_bb_mon_curr_rates.month AND t_bb_exp_st.rep_month::text = t_bb_mon_curr_rates.rep_month::text AND t_bb_exp_st.pc::text = t_bb_mon_curr_rates.pc::text;
 
-ALTER TABLE public.q_bb_exp_eur
+ALTER TABLE public.q_bb_exp_usd
     OWNER TO ictasadmin;
-
