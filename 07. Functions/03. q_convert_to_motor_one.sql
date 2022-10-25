@@ -207,6 +207,7 @@ CREATE OR REPLACE VIEW public.q_cb_work_up_without_coeff
 ALTER FUNCTION public.q_convert_to_motor_one()
     OWNER TO ictasadmin;
 
+
 DROP VIEW IF EXISTS q_bb_up_pre_coeff_activem_indexes CASCADE;
 
 CREATE OR REPLACE VIEW public.q_bb_up_pre_coeff_activem_indexes
@@ -219,19 +220,19 @@ CREATE OR REPLACE VIEW public.q_bb_up_pre_coeff_activem_indexes
     q_bb_analysis_activem_with_prices.l_4,
     q_bb_analysis_activem_with_prices.l_5,
     q_bb_analysis_activem_with_prices.l_6,
-    q_bb_analysis_activem_with_prices.exp_bb_mon,
+    q_bb_analysis_activem_with_prices.exp_base_mon,
     q_bb_analysis_activem_with_prices.rs_l1,
     q_bb_analysis_activem_with_prices.rs_l2,
     q_bb_analysis_activem_with_prices.rs_l3,
     q_bb_analysis_activem_with_prices.rs_l4,
-    t_bb_indexes.bb_ufe,
-    t_bb_indexes.bb_tufe,
-    t_bb_indexes.bb_inf_usd,
-    t_bb_indexes.bb_inf_eur,
-    t_bb_indexes.bb_metal,
-    t_bb_indexes.bb_petrol,
-    t_bb_indexes.bb_cement,
-    t_bb_indexes.bb_electricity,
+    t_bb_indexes.r_ufe,
+    t_bb_indexes.r_tufe,
+    t_bb_indexes.r_inf_usd,
+    t_bb_indexes.r_inf_eur,
+    t_bb_indexes.r_metal,
+    t_bb_indexes.r_petrol,
+    t_bb_indexes.r_cement,
+    t_bb_indexes.r_electricity,
     q_bb_analysis_activem_with_prices.curr,
     q_bb_analysis_activem_with_prices.an_rs_quantity,
     q_bb_analysis_activem_with_prices.up_cost,
@@ -240,7 +241,7 @@ CREATE OR REPLACE VIEW public.q_bb_up_pre_coeff_activem_indexes
     q_bb_analysis_activem_with_prices.key_r_pc_l6,
     q_bb_analysis_activem_with_prices.key_full
    FROM q_bb_analysis_activem_with_prices
-     LEFT JOIN t_bb_indexes ON q_bb_analysis_activem_with_prices.exp_bb_mon = t_bb_indexes.month AND q_bb_analysis_activem_with_prices.rep_month::text = t_bb_indexes.rep_month::text;
+     LEFT JOIN t_bb_indexes ON q_bb_analysis_activem_with_prices.exp_base_mon = t_bb_indexes.month AND q_bb_analysis_activem_with_prices.rep_month::text = t_bb_indexes.rep_month::text;
 
 CREATE OR REPLACE VIEW public.q_bb_res_up_market_coeff
  AS
@@ -256,8 +257,8 @@ CREATE OR REPLACE VIEW public.q_bb_res_up_market_coeff
     q_bb_up_pre_coeff_activem_indexes.rs_l2,
     q_bb_up_pre_coeff_activem_indexes.rs_l3,
     q_bb_up_pre_coeff_activem_indexes.rs_l4 ,
-    (1::numeric + r4_code.w_ufe * q_bb_up_pre_coeff_activem_indexes.bb_ufe) * (1::numeric + r4_code.w_tufe * q_bb_up_pre_coeff_activem_indexes.bb_tufe) * (1::numeric + r4_code.w_inf_usd * q_bb_up_pre_coeff_activem_indexes.bb_inf_usd) * (1::numeric + r4_code.w_inf_eur * q_bb_up_pre_coeff_activem_indexes.bb_inf_eur) * (1::numeric + r4_code.w_metal * q_bb_up_pre_coeff_activem_indexes.bb_metal) * (1::numeric + r4_code.w_petrol * q_bb_up_pre_coeff_activem_indexes.bb_petrol) * (1::numeric + r4_code.w_cement * q_bb_up_pre_coeff_activem_indexes.bb_cement) * (1::numeric + r4_code.w_electricity * q_bb_up_pre_coeff_activem_indexes.bb_electricity) AS up_cost_coeff,
-    q_bb_up_pre_coeff_activem_indexes.exp_bb_mon AS "month",
+    (1::numeric + r4_code.w_ufe * q_bb_up_pre_coeff_activem_indexes.r_ufe) * (1::numeric + r4_code.w_tufe * q_bb_up_pre_coeff_activem_indexes.r_tufe) * (1::numeric + r4_code.w_inf_usd * q_bb_up_pre_coeff_activem_indexes.r_inf_usd) * (1::numeric + r4_code.w_inf_eur * q_bb_up_pre_coeff_activem_indexes.r_inf_eur) * (1::numeric + r4_code.w_metal * q_bb_up_pre_coeff_activem_indexes.r_metal) * (1::numeric + r4_code.w_petrol * q_bb_up_pre_coeff_activem_indexes.r_petrol) * (1::numeric + r4_code.w_cement * q_bb_up_pre_coeff_activem_indexes.r_cement) * (1::numeric + r4_code.w_electricity * q_bb_up_pre_coeff_activem_indexes.r_electricity) AS up_cost_coeff,
+    q_bb_up_pre_coeff_activem_indexes.exp_base_mon AS "month",
     q_bb_up_pre_coeff_activem_indexes.up_cost,
     q_bb_up_pre_coeff_activem_indexes.an_rs_quantity,
     r4_code.currency as curr,
@@ -265,11 +266,11 @@ CREATE OR REPLACE VIEW public.q_bb_res_up_market_coeff
     q_bb_up_pre_coeff_activem_indexes.key_r4,
     q_bb_up_pre_coeff_activem_indexes.key_r_pc_l6,
     q_bb_up_pre_coeff_activem_indexes.key_full,
-    (((q_bb_up_pre_coeff_activem_indexes.key_full::text || '.'::text) || q_bb_up_pre_coeff_activem_indexes.curr::text) || '.'::text) || q_bb_up_pre_coeff_activem_indexes.exp_bb_mon AS key_full_comb
+    (((q_bb_up_pre_coeff_activem_indexes.key_full::text || '.'::text) || q_bb_up_pre_coeff_activem_indexes.curr::text) || '.'::text) || q_bb_up_pre_coeff_activem_indexes.exp_base_mon AS key_full_comb
    FROM q_bb_up_pre_coeff_activem_indexes
      LEFT JOIN r4_code ON q_bb_up_pre_coeff_activem_indexes.key_r4_simple::text = r4_code.key_r4_simple::text
-  GROUP BY q_bb_up_pre_coeff_activem_indexes.rep_month, q_bb_up_pre_coeff_activem_indexes.pc, q_bb_up_pre_coeff_activem_indexes.l_1, q_bb_up_pre_coeff_activem_indexes.l_2, q_bb_up_pre_coeff_activem_indexes.l_3, q_bb_up_pre_coeff_activem_indexes.l_4, q_bb_up_pre_coeff_activem_indexes.l_5, q_bb_up_pre_coeff_activem_indexes.l_6, q_bb_up_pre_coeff_activem_indexes.rs_l1, q_bb_up_pre_coeff_activem_indexes.rs_l2, q_bb_up_pre_coeff_activem_indexes.rs_l3, q_bb_up_pre_coeff_activem_indexes.rs_l4, ((1::numeric + r4_code.w_ufe * q_bb_up_pre_coeff_activem_indexes.bb_ufe) * (1::numeric + r4_code.w_tufe * q_bb_up_pre_coeff_activem_indexes.bb_tufe) * (1::numeric + r4_code.w_inf_usd * q_bb_up_pre_coeff_activem_indexes.bb_inf_usd) * (1::numeric + r4_code.w_inf_eur * q_bb_up_pre_coeff_activem_indexes.bb_inf_eur) * (1::numeric + r4_code.w_metal * q_bb_up_pre_coeff_activem_indexes.bb_metal) * (1::numeric + r4_code.w_petrol * q_bb_up_pre_coeff_activem_indexes.bb_petrol) * (1::numeric + r4_code.w_cement * q_bb_up_pre_coeff_activem_indexes.bb_cement) * (1::numeric + r4_code.w_electricity * q_bb_up_pre_coeff_activem_indexes.bb_electricity)), q_bb_up_pre_coeff_activem_indexes.exp_bb_mon, q_bb_up_pre_coeff_activem_indexes.up_cost, q_bb_up_pre_coeff_activem_indexes.an_rs_quantity, r4_code.currency, q_bb_up_pre_coeff_activem_indexes.key_r4_simple, q_bb_up_pre_coeff_activem_indexes.key_r4, q_bb_up_pre_coeff_activem_indexes.key_r_pc_l6, q_bb_up_pre_coeff_activem_indexes.key_full, ((((q_bb_up_pre_coeff_activem_indexes.key_full::text || '.'::text) || q_bb_up_pre_coeff_activem_indexes.curr::text) || '.'::text) || q_bb_up_pre_coeff_activem_indexes.exp_bb_mon)
-  ORDER BY q_bb_up_pre_coeff_activem_indexes.rep_month, q_bb_up_pre_coeff_activem_indexes.pc, q_bb_up_pre_coeff_activem_indexes.l_1, q_bb_up_pre_coeff_activem_indexes.l_2, q_bb_up_pre_coeff_activem_indexes.l_3, q_bb_up_pre_coeff_activem_indexes.l_4, q_bb_up_pre_coeff_activem_indexes.l_5, q_bb_up_pre_coeff_activem_indexes.l_6, q_bb_up_pre_coeff_activem_indexes.rs_l1, q_bb_up_pre_coeff_activem_indexes.rs_l2, q_bb_up_pre_coeff_activem_indexes.rs_l3, q_bb_up_pre_coeff_activem_indexes.rs_l4, q_bb_up_pre_coeff_activem_indexes.exp_bb_mon;
+  GROUP BY q_bb_up_pre_coeff_activem_indexes.rep_month, q_bb_up_pre_coeff_activem_indexes.pc, q_bb_up_pre_coeff_activem_indexes.l_1, q_bb_up_pre_coeff_activem_indexes.l_2, q_bb_up_pre_coeff_activem_indexes.l_3, q_bb_up_pre_coeff_activem_indexes.l_4, q_bb_up_pre_coeff_activem_indexes.l_5, q_bb_up_pre_coeff_activem_indexes.l_6, q_bb_up_pre_coeff_activem_indexes.rs_l1, q_bb_up_pre_coeff_activem_indexes.rs_l2, q_bb_up_pre_coeff_activem_indexes.rs_l3, q_bb_up_pre_coeff_activem_indexes.rs_l4, ((1::numeric + r4_code.w_ufe * q_bb_up_pre_coeff_activem_indexes.r_ufe) * (1::numeric + r4_code.w_tufe * q_bb_up_pre_coeff_activem_indexes.r_tufe) * (1::numeric + r4_code.w_inf_usd * q_bb_up_pre_coeff_activem_indexes.r_inf_usd) * (1::numeric + r4_code.w_inf_eur * q_bb_up_pre_coeff_activem_indexes.r_inf_eur) * (1::numeric + r4_code.w_metal * q_bb_up_pre_coeff_activem_indexes.r_metal) * (1::numeric + r4_code.w_petrol * q_bb_up_pre_coeff_activem_indexes.r_petrol) * (1::numeric + r4_code.w_cement * q_bb_up_pre_coeff_activem_indexes.r_cement) * (1::numeric + r4_code.w_electricity * q_bb_up_pre_coeff_activem_indexes.r_electricity)), q_bb_up_pre_coeff_activem_indexes.exp_base_mon, q_bb_up_pre_coeff_activem_indexes.up_cost, q_bb_up_pre_coeff_activem_indexes.an_rs_quantity, r4_code.currency, q_bb_up_pre_coeff_activem_indexes.key_r4_simple, q_bb_up_pre_coeff_activem_indexes.key_r4, q_bb_up_pre_coeff_activem_indexes.key_r_pc_l6, q_bb_up_pre_coeff_activem_indexes.key_full, ((((q_bb_up_pre_coeff_activem_indexes.key_full::text || '.'::text) || q_bb_up_pre_coeff_activem_indexes.curr::text) || '.'::text) || q_bb_up_pre_coeff_activem_indexes.exp_base_mon)
+  ORDER BY q_bb_up_pre_coeff_activem_indexes.rep_month, q_bb_up_pre_coeff_activem_indexes.pc, q_bb_up_pre_coeff_activem_indexes.l_1, q_bb_up_pre_coeff_activem_indexes.l_2, q_bb_up_pre_coeff_activem_indexes.l_3, q_bb_up_pre_coeff_activem_indexes.l_4, q_bb_up_pre_coeff_activem_indexes.l_5, q_bb_up_pre_coeff_activem_indexes.l_6, q_bb_up_pre_coeff_activem_indexes.rs_l1, q_bb_up_pre_coeff_activem_indexes.rs_l2, q_bb_up_pre_coeff_activem_indexes.rs_l3, q_bb_up_pre_coeff_activem_indexes.rs_l4, q_bb_up_pre_coeff_activem_indexes.exp_base_mon;
 
 CREATE OR REPLACE VIEW public.q_bb_up_coeff
  AS
@@ -317,43 +318,47 @@ CREATE OR REPLACE VIEW public.q_bb_unit_price
   GROUP BY q_bb_up_coeff.rep_month, q_bb_up_coeff.pc, q_bb_up_coeff.l_1, q_bb_up_coeff.l_2, q_bb_up_coeff.l_3, q_bb_up_coeff.l_4, q_bb_up_coeff.l_5, q_bb_up_coeff.l_6, q_bb_up_coeff.month, q_bb_up_coeff.curr, q_bb_up_coeff.key_r_pc_l6
   ORDER BY q_bb_up_coeff.rep_month, q_bb_up_coeff.pc, q_bb_up_coeff.l_1, q_bb_up_coeff.l_2, q_bb_up_coeff.l_3, q_bb_up_coeff.l_4, q_bb_up_coeff.l_5, q_bb_up_coeff.l_6, q_bb_up_coeff.month;
 
-CREATE OR REPLACE VIEW public.q_pl_exp
+CREATE OR REPLACE VIEW public.q_bb_pl_exp
  AS
- SELECT q_bb_unit_price.rep_month,
-    q_bb_unit_price.pc,
-    q_bb_unit_price.l_1,
-    q_bb_unit_price.l_2,
-    q_bb_unit_price.l_3,
-    q_bb_unit_price.l_4,
-    q_bb_unit_price.l_5,
-    q_bb_unit_price.l_6,
+ SELECT t_bb_qty.rep_month,
+    t_bb_qty.pc,
+    t_bb_qty.l_1,
+    t_bb_qty.l_2,
+    t_bb_qty.l_3,
+    t_bb_qty.l_4,
+    t_bb_qty.l_5,
+    t_bb_qty.l_6,
     q_bb_unit_price.month,
-    sum(t_bb_qty.exp_bb_qty * q_bb_unit_price.unit_price_planned_coeff) AS total_expense,
+    sum(t_bb_qty.exp_base_qty * q_bb_unit_price.unit_price_planned_coeff) AS total_expense,
     q_bb_unit_price.curr,
-    t_bb_qty.key_r_pc_l6
-   FROM q_bb_unit_price
-     LEFT JOIN t_bb_qty ON q_bb_unit_price.key_r_pc_l6::text = t_bb_qty.key_r_pc_l6::text AND q_bb_unit_price.month = t_bb_qty.exp_bb_mon
-  GROUP BY q_bb_unit_price.rep_month, q_bb_unit_price.pc, q_bb_unit_price.l_1, q_bb_unit_price.l_2, q_bb_unit_price.l_3, q_bb_unit_price.l_4, q_bb_unit_price.l_5, q_bb_unit_price.l_6, q_bb_unit_price.month, q_bb_unit_price.curr, t_bb_qty.key_r_pc_l6;
+    q_bb_unit_price.key_r_pc_l6
+   FROM t_bb_qty
+     RIGHT JOIN q_bb_unit_price ON t_bb_qty.pc::text = q_bb_unit_price.pc::text AND t_bb_qty.l_1::text = q_bb_unit_price.l_1::text AND t_bb_qty.l_2::text = q_bb_unit_price.l_2::text AND t_bb_qty.l_3::text = q_bb_unit_price.l_3::text AND t_bb_qty.l_4::text = q_bb_unit_price.l_4::text AND t_bb_qty.l_5::text = q_bb_unit_price.l_5::text AND t_bb_qty.l_6::text = q_bb_unit_price.l_6::text AND t_bb_qty.exp_base_mon = q_bb_unit_price.month AND t_bb_qty.rep_month::text = q_bb_unit_price.rep_month::text
+  GROUP BY t_bb_qty.rep_month, t_bb_qty.pc, t_bb_qty.l_1, t_bb_qty.l_2, t_bb_qty.l_3, t_bb_qty.l_4, t_bb_qty.l_5, t_bb_qty.l_6, q_bb_unit_price.month, q_bb_unit_price.curr, q_bb_unit_price.key_r_pc_l6;
+
+ALTER TABLE public.q_bb_pl_exp
+    OWNER TO ictasadmin;
+
 
 CREATE OR REPLACE VIEW public.q_bb_exp
  AS
- SELECT q_pl_exp.rep_month,
-    q_pl_exp.pc,
-    q_pl_exp.l_1,
-    q_pl_exp.l_2,
-    q_pl_exp.l_3,
-    q_pl_exp.l_4,
-    q_pl_exp.l_5,
-    q_pl_exp.l_6,
-    q_pl_exp.month,
-    q_pl_exp.total_expense,
-    q_pl_exp.curr,
-    q_pl_exp.key_r_pc_l6
-   FROM q_pl_exp
-  WHERE q_pl_exp.total_expense <> 0::numeric
+ SELECT q_bb_pl_exp.rep_month,
+    q_bb_pl_exp.pc,
+    q_bb_pl_exp.l_1,
+    q_bb_pl_exp.l_2,
+    q_bb_pl_exp.l_3,
+    q_bb_pl_exp.l_4,
+    q_bb_pl_exp.l_5,
+    q_bb_pl_exp.l_6,
+    q_bb_pl_exp.month,
+    q_bb_pl_exp.total_expense,
+    q_bb_pl_exp.curr,
+    q_bb_pl_exp.key_r_pc_l6
+   FROM q_bb_pl_exp
+  WHERE q_bb_pl_exp.total_expense <> 0::numeric
 UNION ALL
  SELECT t_bb_exp.rep_month,
-    t_bb_exp.pc AS pc,
+    t_bb_exp.pc,
     t_bb_exp.l_1,
     t_bb_exp.l_2,
     t_bb_exp.l_3,
@@ -366,6 +371,9 @@ UNION ALL
     t_bb_exp.key_r_pc_l6
    FROM t_bb_exp
   WHERE t_bb_exp.exp_ac_exp <> 0::numeric;
+
+ALTER TABLE public.q_bb_exp
+    OWNER TO ictasadmin;
 
 CREATE OR REPLACE VIEW public.q_bb_work_up_with_market_coeff
  AS
@@ -394,10 +402,10 @@ CREATE OR REPLACE VIEW public.q_bb_work_up_without_coeff
     q_bb_up_pre_coeff_activem_indexes.l_4,
     q_bb_up_pre_coeff_activem_indexes.l_5,
     q_bb_up_pre_coeff_activem_indexes.l_6,
-    q_bb_up_pre_coeff_activem_indexes.exp_bb_mon,
+    q_bb_up_pre_coeff_activem_indexes.exp_base_mon,
     q_bb_up_pre_coeff_activem_indexes.curr
    FROM q_bb_up_pre_coeff_activem_indexes
-  GROUP BY q_bb_up_pre_coeff_activem_indexes.rep_month, q_bb_up_pre_coeff_activem_indexes.pc, q_bb_up_pre_coeff_activem_indexes.l_1, q_bb_up_pre_coeff_activem_indexes.l_2, q_bb_up_pre_coeff_activem_indexes.l_3, q_bb_up_pre_coeff_activem_indexes.l_4, q_bb_up_pre_coeff_activem_indexes.l_5, q_bb_up_pre_coeff_activem_indexes.l_6, q_bb_up_pre_coeff_activem_indexes.exp_bb_mon, q_bb_up_pre_coeff_activem_indexes.curr;
+  GROUP BY q_bb_up_pre_coeff_activem_indexes.rep_month, q_bb_up_pre_coeff_activem_indexes.pc, q_bb_up_pre_coeff_activem_indexes.l_1, q_bb_up_pre_coeff_activem_indexes.l_2, q_bb_up_pre_coeff_activem_indexes.l_3, q_bb_up_pre_coeff_activem_indexes.l_4, q_bb_up_pre_coeff_activem_indexes.l_5, q_bb_up_pre_coeff_activem_indexes.l_6, q_bb_up_pre_coeff_activem_indexes.exp_base_mon, q_bb_up_pre_coeff_activem_indexes.curr;
 
 RETURN TRUE;
 End;
