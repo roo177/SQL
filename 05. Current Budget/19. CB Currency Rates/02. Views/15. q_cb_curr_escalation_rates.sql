@@ -1,6 +1,6 @@
 -- View: public.q_cb_curr_escalation_rates
 
--- DROP VIEW public.q_cb_curr_escalation_rates;
+DROP VIEW public.q_cb_curr_escalation_rates CASCADE;
 
 CREATE OR REPLACE VIEW public.q_cb_curr_escalation_rates
  AS
@@ -18,18 +18,18 @@ CREATE OR REPLACE VIEW public.q_cb_curr_escalation_rates
     q_cb_active_months_res_qty.rs_l3,
     q_cb_active_months_res_qty.rs_l4,
         CASE
-            WHEN r4_code.currency::text = 'TRY'::text AND r4_code.w_inf_usd <> 0::numeric THEN 1::numeric + round(q_cb_monthly_curr_rates_inc.rt_usd_try * r4_code.w_inf_usd, 6)
+            WHEN r4_code.currency::text = 'TRY'::text AND r4_code.w_inf_usd <> 0::numeric THEN 1::numeric + q_cb_monthly_curr_rates_inc.rt_usd_try * r4_code.w_inf_usd
             ELSE
             CASE
-                WHEN r4_code.currency::text = 'EUR'::text AND r4_code.w_inf_usd <> 0::numeric THEN 1::numeric + round(q_cb_monthly_curr_rates_inc.rt_usd_eur * r4_code.w_inf_usd, 6)
+                WHEN r4_code.currency::text = 'EUR'::text AND r4_code.w_inf_usd <> 0::numeric THEN 1::numeric + q_cb_monthly_curr_rates_inc.rt_usd_eur * r4_code.w_inf_usd
                 ELSE 1::numeric
             END
         END AS k_usd,
         CASE
-            WHEN r4_code.currency::text = 'TRY'::text AND r4_code.w_inf_eur <> 0::numeric THEN 1::numeric + round(q_cb_monthly_curr_rates_inc.rt_eur_try * r4_code.w_inf_eur, 6)
+            WHEN r4_code.currency::text = 'TRY'::text AND r4_code.w_inf_eur <> 0::numeric THEN 1::numeric + q_cb_monthly_curr_rates_inc.rt_eur_try * r4_code.w_inf_eur
             ELSE
             CASE
-                WHEN r4_code.currency::text = 'USD'::text AND r4_code.w_inf_eur <> 0::numeric THEN 1::numeric + round(q_cb_monthly_curr_rates_inc.rt_eur_usd * r4_code.w_inf_eur, 6)
+                WHEN r4_code.currency::text = 'USD'::text AND r4_code.w_inf_eur <> 0::numeric THEN 1::numeric + q_cb_monthly_curr_rates_inc.rt_eur_usd * r4_code.w_inf_eur
                 ELSE 1::numeric
             END
         END AS k_eur,
