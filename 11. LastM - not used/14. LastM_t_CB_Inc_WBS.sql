@@ -23,5 +23,3 @@ ALTER TABLE public."LastM_t_CB_Inc_WBS"
     OWNER TO ictasadmin;
 
 
-    asd
-
