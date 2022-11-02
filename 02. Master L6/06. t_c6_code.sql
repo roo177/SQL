@@ -1,4 +1,4 @@
--- Table: public.c6_code test
+-- Table: public.c6_code
 
 -- DROP TABLE IF EXISTS public.c6_code;
 
