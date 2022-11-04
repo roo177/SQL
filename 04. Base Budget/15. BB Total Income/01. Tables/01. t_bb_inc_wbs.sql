@@ -17,6 +17,11 @@ CREATE TABLE IF NOT EXISTS public.t_bb_inc_wbs
     key_r_pc_l6 character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((((((((((rep_month)::text || '.'::text) || (pc)::text) || '.'::text) || (l_1)::text) || '.'::text) || (l_2)::text) || '.'::text) || (l_3)::text) || '.'::text) || (l_4)::text) || '.'::text) || (l_5)::text) || '.'::text) || (l_6)::text)) STORED,
     unit character varying(20) COLLATE pg_catalog."default" DEFAULT '-'::character varying,
     CONSTRAINT t_bb_inc_wbs_pkey PRIMARY KEY (rep_month, pc, l_1, l_2, l_3, l_4, l_5, l_6, curr),
+    CONSTRAINT bb_inc_wbs_unit FOREIGN KEY (unit)
+        REFERENCES public.t_units (unit) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+        NOT VALID,
     CONSTRAINT r__t_bb_in__c6_code FOREIGN KEY (l_5, l_4, l_3, l_2, l_6, l_1)
         REFERENCES public.c6_code (c_l5, c_l4, c_l3, c_l2, c_l6, c_l1) MATCH SIMPLE
         ON UPDATE CASCADE
@@ -28,12 +33,7 @@ CREATE TABLE IF NOT EXISTS public.t_bb_inc_wbs
     CONSTRAINT r__t_bb_in__t_rep_m FOREIGN KEY (rep_month)
         REFERENCES public.t_rep_month (rep_month) MATCH SIMPLE
         ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    CONSTRAINT unit_bb_inc FOREIGN KEY (unit)
-        REFERENCES public.t_units (unit) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
+        ON DELETE RESTRICT
 )
 
 TABLESPACE pg_default;

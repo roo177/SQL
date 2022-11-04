@@ -24,7 +24,14 @@ CREATE TABLE IF NOT EXISTS public.r4_code
     admin_id character varying(50) COLLATE pg_catalog."default",
     r_loss numeric(7,5) DEFAULT 0,
     key_r4_simple character varying(15) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((r_1_code)::text || '.'::text) || (r_2_code)::text) || '.'::text) || (r_3_code)::text) || '.'::text) || (r_4_code)::text)) STORED,
+    code_r4 character varying(12) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((r_1_code)::text || '.'::text) || (r_2_code)::text) || '.'::text) || (r_3_code)::text) || '.'::text) || (r_4_code)::text)) STORED,
     CONSTRAINT r4_code_pkey PRIMARY KEY (r_1_code, r_2_code, r_3_code, r_4_code),
+    CONSTRAINT code_r4_unique UNIQUE (code_r4),
+    CONSTRAINT r4_unit FOREIGN KEY (unit)
+        REFERENCES public.t_units (unit) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+        NOT VALID,
     CONSTRAINT r__r4_code__r1_code FOREIGN KEY (r_1_code)
         REFERENCES public.r1_code (r_1_code) MATCH SIMPLE
         ON UPDATE CASCADE
