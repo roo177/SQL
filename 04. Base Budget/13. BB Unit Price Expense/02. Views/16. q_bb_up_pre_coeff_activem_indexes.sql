@@ -1,6 +1,6 @@
 -- View: public.q_bb_up_pre_coeff_activem_indexes
 
-DROP VIEW public.q_bb_up_pre_coeff_activem_indexes;
+-- DROP VIEW public.q_bb_up_pre_coeff_activem_indexes;
 
 CREATE OR REPLACE VIEW public.q_bb_up_pre_coeff_activem_indexes
  AS

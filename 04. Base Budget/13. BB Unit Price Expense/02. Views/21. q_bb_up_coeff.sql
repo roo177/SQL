@@ -1,6 +1,6 @@
 -- View: public.q_bb_up_coeff
 
-DROP VIEW public.q_bb_up_coeff;
+-- DROP VIEW public.q_bb_up_coeff;
 
 CREATE OR REPLACE VIEW public.q_bb_up_coeff
  AS
