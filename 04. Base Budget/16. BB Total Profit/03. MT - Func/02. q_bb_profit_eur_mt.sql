@@ -30,7 +30,10 @@ CREATE TABLE IF NOT EXISTS t_bb_profit_eur_st
     l_6 character varying(3) COLLATE pg_catalog."default",
     profit double precision,
     desc_tr_l6 character varying(255) COLLATE pg_catalog."default",
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default"
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default",
+    unit character varying(50) collate pg_catalog."default",
+    desc_tr_l4 character varying(255) collate pg_catalog."default",
+    desc_tr_l5 character varying(255) collate pg_catalog."default"
 )
 
 TABLESPACE pg_default;
@@ -61,11 +64,31 @@ q_bb_profit_eur.l_5,
 q_bb_profit_eur.l_6, 
 sum(q_bb_profit_eur.profit) as profit, 
 c6_code.desc_tr_l6, 
-q_bb_profit_eur.key_r_pc_l6
-from ((q_bb_profit_eur left join c3_code on (q_bb_profit_eur.l_3 = c3_code.c_l3) and (q_bb_profit_eur.l_2 = c3_code.c_l2) and (q_bb_profit_eur.l_1 = c3_code.c_l1)) 
-left join c2_code on (q_bb_profit_eur.l_2 = c2_code.c_l2) and (q_bb_profit_eur.l_1 = c2_code.c_l1)) left join c6_code on (q_bb_profit_eur.l_6 = c6_code.c_l6) 
-and (q_bb_profit_eur.l_5 = c6_code.c_l5) and (q_bb_profit_eur.l_4 = c6_code.c_l4) and (q_bb_profit_eur.l_3 = c6_code.c_l3) and (q_bb_profit_eur.l_2 = c6_code.c_l2) 
-and (q_bb_profit_eur.l_1 = c6_code.c_l1)
+q_bb_profit_eur.key_r_pc_l6,
+c6_code.unit
+,c5_code.desc_tr_l5
+,c4_code.desc_tr_l4
+from ((((q_bb_profit_eur
+	left join c3_code on (q_bb_profit_eur.l_3 = c3_code.c_l3) 
+	and (q_bb_profit_eur.l_2 = c3_code.c_l2) 
+	and (q_bb_profit_eur.l_1 = c3_code.c_l1))
+	left join c2_code on (q_bb_profit_eur.l_2 = c2_code.c_l2) 
+	and (q_bb_profit_eur.l_1 = c2_code.c_l1))
+	left join c6_code on (q_bb_profit_eur.l_6 = c6_code.c_l6) 
+	and (q_bb_profit_eur.l_5 = c6_code.c_l5) 
+	and (q_bb_profit_eur.l_4 = c6_code.c_l4) 
+	and (q_bb_profit_eur.l_3 = c6_code.c_l3) 
+	and (q_bb_profit_eur.l_2 = c6_code.c_l2) 
+	and (q_bb_profit_eur.l_1 = c6_code.c_l1))
+	left join c4_code on (q_bb_profit_eur.l_4 = c4_code.c_l4) 
+	and (q_bb_profit_eur.l_3 = c4_code.c_l3) 
+	and (q_bb_profit_eur.l_2 = c4_code.c_l2) 
+	and (q_bb_profit_eur.l_1 = c4_code.c_l1))
+	left join c5_code on (q_bb_profit_eur.l_5 = c5_code.c_l5) 
+	and (q_bb_profit_eur.l_4 = c5_code.c_l4) 
+	and (q_bb_profit_eur.l_3 = c5_code.c_l3) 
+	and (q_bb_profit_eur.l_2 = c5_code.c_l2) 
+	and (q_bb_profit_eur.l_1 = c5_code.c_l1) 
 group by 
 q_bb_profit_eur.rep_month, 
 q_bb_profit_eur.pc, 
@@ -81,7 +104,10 @@ q_bb_profit_eur.l_4,
 q_bb_profit_eur.l_5, 
 q_bb_profit_eur.l_6, 
 c6_code.desc_tr_l6, 
-q_bb_profit_eur.key_r_pc_l6;
+q_bb_profit_eur.key_r_pc_l6	
+,c6_code.unit
+	,c5_code.desc_tr_l5
+	,c4_code.desc_tr_l4;
 
 RETURN TRUE;
 End;
