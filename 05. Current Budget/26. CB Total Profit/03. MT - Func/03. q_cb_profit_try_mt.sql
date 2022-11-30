@@ -1,6 +1,6 @@
 -- FUNCTION: public.q_cb_profit_try_mt()
 
--- DROP FUNCTION IF EXISTS public.q_cb_profit_try_mt();
+DROP FUNCTION IF EXISTS public.q_cb_profit_try_mt();
 
 CREATE OR REPLACE FUNCTION public.q_cb_profit_try_mt(
 	)
@@ -13,7 +13,7 @@ BEGIN
 
 -- Table: t_cb_profit_try_st
 
-DROP TABLE IF EXISTS t_cb_profit_try_st;
+--DROP TABLE IF EXISTS t_cb_profit_try_st;
 
 CREATE TABLE IF NOT EXISTS t_cb_profit_try_st
 (
@@ -48,7 +48,6 @@ TABLESPACE pg_default;
 Raise notice 'Deleting existing data';
 Delete from t_cb_profit_try_st;
 Raise notice 'Appending new data';
-
 
 Insert into t_cb_profit_try_st
 
@@ -119,5 +118,5 @@ End;
 
 $BODY$;
 
---ALTER FUNCTION public.q_cb_profit_try_mt()
---    OWNER TO ictasadmin;
+ALTER FUNCTION public.q_cb_profit_try_mt()
+    OWNER TO ictasadmin;

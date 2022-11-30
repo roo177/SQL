@@ -13,7 +13,7 @@ BEGIN
 
 -- Table: t_cb_profit_st
 
-DROP TABLE IF EXISTS t_cb_profit_st cascade;
+-- DROP TABLE IF EXISTS t_cb_profit_st cascade;
 
 CREATE TABLE IF NOT EXISTS t_cb_profit_st
 (
@@ -121,5 +121,5 @@ End;
 
 $BODY$;
 
---ALTER FUNCTION public.q_cb_profit_mt()
---    OWNER TO ictasadmin;
+ALTER FUNCTION public.q_cb_profit_mt()
+    OWNER TO ictasadmin;
