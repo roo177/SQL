@@ -119,6 +119,8 @@ CREATE OR REPLACE VIEW public.q_cb_up_coeff
   GROUP BY q_cb_res_up_market_coeff.rep_month, q_cb_res_up_market_coeff.pc, q_cb_res_up_market_coeff.l_1, q_cb_res_up_market_coeff.l_2, q_cb_res_up_market_coeff.l_3, q_cb_res_up_market_coeff.l_4, q_cb_res_up_market_coeff.l_5, q_cb_res_up_market_coeff.l_6, q_cb_res_up_market_coeff.rs_l1, q_cb_res_up_market_coeff.rs_l2, q_cb_res_up_market_coeff.rs_l3, q_cb_res_up_market_coeff.rs_l4, q_cb_res_up_market_coeff.month, q_cb_res_up_market_coeff.up_cost_coeff, q_cb_curr_escalation_rates.k_usd, q_cb_curr_escalation_rates.k_eur, (round(q_cb_res_up_market_coeff.up_cost_coeff * q_cb_curr_escalation_rates.k_usd * q_cb_curr_escalation_rates.k_eur, 6)), q_cb_res_up_market_coeff.up_cost, q_cb_res_up_market_coeff.curr, q_cb_res_up_market_coeff.key_full, q_cb_res_up_market_coeff.an_rs_quantity, q_cb_res_up_market_coeff.key_r_pc_l6;
 
 
+
+
 CREATE OR REPLACE VIEW public.q_cb_unit_price_pre
  AS
  SELECT q_cb_up_pre_coeff_activem_indexes.rep_month,
@@ -133,64 +135,103 @@ CREATE OR REPLACE VIEW public.q_cb_unit_price_pre
     q_cb_up_pre_coeff_activem_indexes.curr,
     q_cb_up_pre_coeff_activem_indexes.key_r_pc_l6,
         CASE
-            WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_try) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
-            ELSE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_eur) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
-                ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
+                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_try) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
+                ELSE
+                CASE
+                    WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_eur) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
+                    ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
+                END
             END
+            ELSE 0::numeric
         END AS cost_exc_inf_usd,
         CASE
-            WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_eur_try) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
-            ELSE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'USD'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_eur_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
-                ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
+                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_eur_try) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
+                ELSE
+                CASE
+                    WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'USD'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_eur_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
+                    ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
+                END
             END
+            ELSE 0::numeric
         END AS cost_exc_inf_eur,
-    q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_ufe) + r4_code.w_tufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_tufe) + r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) AS cost_market,
         CASE
-            WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + bb_inf_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_try) - 1::numeric)
-            ELSE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_ufe) + r4_code.w_tufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_tufe) + r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity))
+            ELSE 0::numeric
+        END AS cost_market,
+        CASE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + bb_inf_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_eur) - 1::numeric)
-                ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + bb_inf_usd) - 1::numeric)
+                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_try) - 1::numeric)
+                ELSE
+                CASE
+                    WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_eur) - 1::numeric)
+                    ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd - 1::numeric)
+                END
             END
+            ELSE 0::numeric
         END AS cost_market_end_rate_change,
-
-
-
         CASE
-            WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + bb_inf_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_try) - 1::numeric)
-            ELSE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + bb_inf_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_eur) - 1::numeric)
-                ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + bb_inf_usd) - 1::numeric)
+                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_try) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
+                ELSE
+                CASE
+                    WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_eur) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
+                    ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
+                END
             END
+            ELSE 0::numeric
         END +
         CASE
-            WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_try) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
-            ELSE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_eur) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
-                ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd)
+                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_eur_try) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
+                ELSE
+                CASE
+                    WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'USD'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_eur_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
+                    ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
+                END
             END
+            ELSE 0::numeric
         END +
         CASE
-            WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_eur_try) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
-            ELSE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'USD'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_eur_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
-                ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_eur)
+                WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_try) - 1::numeric)
+                ELSE
+                CASE
+                    WHEN q_cb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * ((1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.rt_usd_eur) - 1::numeric)
+                    ELSE q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_inf_usd - 1::numeric)
+                END
             END
-        END + q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_ufe) + r4_code.w_tufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_tufe) + r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity)) AS up_cost_total,
-    t_cb_analysis.an_rs_quantity
+            ELSE 0::numeric
+        END +
+        CASE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_cb_exp_esc_rates_l6.exp_rate)
+            ELSE 0::numeric
+        END +
+        CASE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_ufe) + r4_code.w_tufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_tufe) + r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity))
+            ELSE 0::numeric
+        END AS up_cost_total,
+    t_cb_analysis.an_rs_quantity,
+        CASE
+            WHEN t_cb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_cb_exp_esc_rates_l6.exp_rate)
+            ELSE 0::numeric
+        END AS bypass_cost
    FROM q_cb_up_pre_coeff_activem_indexes
      LEFT JOIN r4_code ON q_cb_up_pre_coeff_activem_indexes.key_r4_simple::text = r4_code.key_r4_simple::text
-     LEFT JOIN t_cb_analysis ON q_cb_up_pre_coeff_activem_indexes.key_full::text = t_cb_analysis.key_full::text;
+     LEFT JOIN t_cb_analysis ON q_cb_up_pre_coeff_activem_indexes.key_full::text = t_cb_analysis.key_full::text
+     LEFT JOIN t_cb_exp_esc_rates_l6 ON q_cb_up_pre_coeff_activem_indexes.exp_cb_mon = t_cb_exp_esc_rates_l6.month AND q_cb_up_pre_coeff_activem_indexes.key_r_pc_l6::text = t_cb_exp_esc_rates_l6.key_r_pc_l6::text;
 
 ALTER TABLE public.q_cb_unit_price_pre
     OWNER TO ictasadmin;
+
+
 
 
 
@@ -439,67 +480,102 @@ CREATE OR REPLACE VIEW public.q_bb_unit_price_pre
     q_bb_up_pre_coeff_activem_indexes.curr,
     q_bb_up_pre_coeff_activem_indexes.key_r_pc_l6,
         CASE
-            WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_try) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
-            ELSE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_eur) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
-                ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
+                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_try) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
+                ELSE
+                CASE
+                    WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_eur) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
+                    ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
+                END
             END
+            ELSE 0::numeric
         END AS cost_exc_inf_usd,
         CASE
-            WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_eur_try) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
-            ELSE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'USD'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_eur_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
-                ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
+                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_eur_try) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
+                ELSE
+                CASE
+                    WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'USD'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_eur_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
+                    ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
+                END
             END
+            ELSE 0::numeric
         END AS cost_exc_inf_eur,
-    q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_ufe) + r4_code.w_tufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_tufe) + r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) AS cost_market,
-        
-
-		CASE
-            WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + r_inf_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_try) - 1::numeric)
-            ELSE
+        CASE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_ufe) + r4_code.w_tufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_tufe) + r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity))
+            ELSE 0::numeric
+        END AS cost_market,
+        CASE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + r_inf_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_eur) - 1::numeric)
-                ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + r_inf_usd) - 1::numeric)
+                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_try) - 1::numeric)
+                ELSE
+                CASE
+                    WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_eur) - 1::numeric)
+                    ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd - 1::numeric)
+                END
             END
+            ELSE 0::numeric
         END AS cost_market_end_rate_change,
-		
-		
-		
-		
-		CASE
-            WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + r_inf_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_try) - 1::numeric)
-            ELSE
+        CASE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + r_inf_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_eur) - 1::numeric)
-                ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + r_inf_usd) - 1::numeric)
+                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_try) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
+                ELSE
+                CASE
+                    WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_eur) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
+                    ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
+                END
             END
+            ELSE 0::numeric
         END +
         CASE
-            WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_try) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
-            ELSE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_eur) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
-                ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_usd * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd)
+                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_eur_try) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
+                ELSE
+                CASE
+                    WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'USD'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_eur_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
+                    ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
+                END
             END
+            ELSE 0::numeric
         END +
         CASE
-            WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_eur_try) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
-            ELSE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN
             CASE
-                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'USD'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_eur_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
-                ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * r4_code.w_inf_eur * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_eur)
+                WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'TRY'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_try) - 1::numeric)
+                ELSE
+                CASE
+                    WHEN q_bb_up_pre_coeff_activem_indexes.curr::text = 'EUR'::text THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * ((1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.rt_usd_eur) - 1::numeric)
+                    ELSE q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_inf_usd - 1::numeric)
+                END
             END
-        END + q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_ufe) + r4_code.w_tufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_tufe) + r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity)) AS up_cost_total,
-    t_bb_analysis.an_rs_quantity
+            ELSE 0::numeric
+        END +
+        CASE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_bb_exp_esc_rates_l6.exp_rate)
+            ELSE 0::numeric
+        END +
+        CASE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_ufe) + r4_code.w_tufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_tufe) + r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity))
+            ELSE 0::numeric
+        END AS up_cost_total,
+    t_bb_analysis.an_rs_quantity,
+        CASE
+            WHEN t_bb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_bb_exp_esc_rates_l6.exp_rate)
+            ELSE 0::numeric
+        END AS bypass_cost
    FROM q_bb_up_pre_coeff_activem_indexes
      LEFT JOIN r4_code ON q_bb_up_pre_coeff_activem_indexes.key_r4_simple::text = r4_code.key_r4_simple::text
-     LEFT JOIN t_bb_analysis ON q_bb_up_pre_coeff_activem_indexes.key_full::text = t_bb_analysis.key_full::text;
+     LEFT JOIN t_bb_analysis ON q_bb_up_pre_coeff_activem_indexes.key_full::text = t_bb_analysis.key_full::text
+     LEFT JOIN t_bb_exp_esc_rates_l6 ON q_bb_up_pre_coeff_activem_indexes.exp_base_mon = t_bb_exp_esc_rates_l6.month AND q_bb_up_pre_coeff_activem_indexes.key_r_pc_l6::text = t_bb_exp_esc_rates_l6.key_r_pc_l6::text;
 
 ALTER TABLE public.q_bb_unit_price_pre
     OWNER TO ictasadmin;
+
 
 
 
