@@ -13,9 +13,9 @@ BEGIN
 
 -- Table: public.t_cb_inc_usd_st
 
--- DROP TABLE IF EXISTS public.t_cb_inc_usd_st;
+DROP TABLE IF EXISTS t_cb_inc_usd_st;
 
-CREATE TABLE IF NOT EXISTS public.t_cb_inc_usd_st
+CREATE TEMPORARY TABLE t_cb_inc_usd_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
     pc character varying(3) COLLATE pg_catalog."default",
@@ -37,9 +37,7 @@ CREATE TABLE IF NOT EXISTS public.t_cb_inc_usd_st
 
 TABLESPACE pg_default;
 
---ALTER TABLE IF EXISTS public.t_cb_inc_usd_st
---    OWNER to ictasadmin;
-
+-- View: q_cb_exp_eur
 Raise notice 'Deleting existing data';
 Delete from t_cb_inc_usd_st;
 Raise notice 'Appending new data';
@@ -82,6 +80,8 @@ q_cb_inc_usd.l_5,
 q_cb_inc_usd.l_6, 
 c6_code.desc_tr_l6, 
 q_cb_inc_usd.key_r_pc_l6;
+
+
 
 RETURN TRUE;
 End;
