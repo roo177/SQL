@@ -13,9 +13,9 @@ BEGIN
 
 -- Table: t_cb_mod_profit_try_st
 
-DROP TABLE IF EXISTS t_cb_mod_profit_try_st;
+--DROP TABLE IF EXISTS t_cb_mod_profit_try_st;
 
-CREATE TEMPORARY TABLE t_cb_mod_profit_try_st
+CREATE TEMPORARY TABLE IF NOT EXISTS t_cb_mod_profit_try_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
     pc character varying(3) COLLATE pg_catalog."default",

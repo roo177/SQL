@@ -13,9 +13,9 @@ BEGIN
 
 -- Table: t_cb_mod_inc_eur_st
 
-DROP TABLE IF EXISTS t_cb_mod_inc_eur_st;
+--DROP TABLE IF EXISTS t_cb_mod_inc_eur_st;
 
-CREATE TEMPORARY TABLE t_cb_mod_inc_eur_st
+CREATE TEMPORARY TABLE IF NOT EXISTS t_cb_mod_inc_eur_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
     pc character varying(3) COLLATE pg_catalog."default",
@@ -40,6 +40,7 @@ TABLESPACE pg_default;
 --ALTER TABLE IF EXISTS t_cb_mod_inc_eur_st
 --    OWNER to ictasadmin;
 DROP VIEW IF EXISTS q_cb_mod_inc_eur;
+
 CREATE TEMPORARY VIEW q_cb_mod_inc_eur AS
  SELECT t_cb_mod_inc_st.rep_month,
     t_cb_mod_inc_st.pc,

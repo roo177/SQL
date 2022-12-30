@@ -15,7 +15,7 @@ BEGIN
 
 DROP TABLE IF EXISTS t_cb_mod_profit_usd_st;
 
-CREATE TEMPORARY TABLE t_cb_mod_profit_usd_st
+CREATE TEMPORARY TABLE IF NOT EXISTS  t_cb_mod_profit_usd_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
     pc character varying(3) COLLATE pg_catalog."default",

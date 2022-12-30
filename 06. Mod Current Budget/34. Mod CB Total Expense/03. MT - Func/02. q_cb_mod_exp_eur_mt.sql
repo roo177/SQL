@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION q_cb_mod_exp_eur_mt(
 AS $BODY$
 BEGIN
 
-DROP TABLE IF EXISTS t_cb_mod_exp_eur_st;
+--DROP TABLE IF EXISTS t_cb_mod_exp_eur_st;
 
 CREATE TEMPORARY TABLE t_cb_mod_exp_eur_st
 (

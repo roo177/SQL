@@ -1,6 +1,6 @@
 -- View: public.q_pl_exp
 
--- DROP VIEW public.q_pl_exp;
+DROP VIEW public.q_pl_exp CASCADE;
 
 CREATE OR REPLACE VIEW public.q_pl_exp
  AS
@@ -13,7 +13,7 @@ CREATE OR REPLACE VIEW public.q_pl_exp
     q_cb_unit_price.l_5,
     q_cb_unit_price.l_6,
     q_cb_unit_price.month,
-    sum(t_cb_qty.exp_cb_qty * q_cb_unit_price.unit_price_planned_coeff) AS total_expense,
+    round(sum(t_cb_qty.exp_cb_qty * q_cb_unit_price.unit_price_planned_coeff),12) AS total_expense,
     q_cb_unit_price.curr,
     t_cb_qty.key_r_pc_l6
    FROM q_cb_unit_price

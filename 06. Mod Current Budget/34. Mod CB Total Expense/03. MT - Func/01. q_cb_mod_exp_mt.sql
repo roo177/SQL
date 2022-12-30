@@ -1,8 +1,8 @@
--- FUNCTION: q_cb_mod_exp_mt()
+-- FUNCTION: public.q_cb_mod_exp_mt()
 
-DROP FUNCTION IF EXISTS q_cb_mod_exp_mt();
+-- DROP FUNCTION IF EXISTS public.q_cb_mod_exp_mt();
 
-CREATE OR REPLACE FUNCTION q_cb_mod_exp_mt(
+CREATE OR REPLACE FUNCTION public.q_cb_mod_exp_mt(
 	)
     RETURNS boolean
     LANGUAGE 'plpgsql'
@@ -11,9 +11,9 @@ CREATE OR REPLACE FUNCTION q_cb_mod_exp_mt(
 AS $BODY$
 BEGIN
 
-DROP TABLE IF EXISTS t_cb_mod_exp_st;
+DROP TABLE IF EXISTS t_cb_mod_exp_st CASCADE;
 
-CREATE TEMPORARY TABLE t_cb_mod_exp_st
+CREATE TEMPORARY TABLE IF NOT EXISTS t_cb_mod_exp_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
     pc character varying(3) COLLATE pg_catalog."default",
@@ -61,5 +61,5 @@ End;
 
 $BODY$;
 
---ALTER FUNCTION q_cb_mod_exp_mt()
---    OWNER TO ictasadmin;
+ALTER FUNCTION public.q_cb_mod_exp_mt()
+    OWNER TO ictasadmin;

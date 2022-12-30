@@ -11,11 +11,11 @@ CREATE OR REPLACE FUNCTION q_cb_mod_inc_usd_mt(
 AS $BODY$
 BEGIN
 
--- Table: t_cb_inc_usd_st
+-- Table: t_cb_mod_inc_usd_st
 
-DROP TABLE IF EXISTS t_cb_inc_usd_st;
+--DROP TABLE IF EXISTS t_cb_mod_inc_usd_st;
 
-CREATE TEMPORARY TABLE t_cb_inc_usd_st
+CREATE TEMPORARY TABLE IF NOT EXISTS t_cb_mod_inc_usd_st
 (
     rep_month character varying(4) COLLATE pg_catalog."default",
     pc character varying(3) COLLATE pg_catalog."default",
@@ -37,14 +37,52 @@ CREATE TEMPORARY TABLE t_cb_inc_usd_st
 
 TABLESPACE pg_default;
 
---ALTER TABLE IF EXISTS t_cb_inc_usd_st
+--ALTER TABLE IF EXISTS t_cb_mod_inc_usd_st
 --    OWNER to ictasadmin;
 
+DROP VIEW IF EXISTS q_cb_mod_inc_usd;
+
+CREATE TEMPORARY VIEW q_cb_mod_inc_usd
+ AS
+ SELECT t_cb_mod_inc_st.rep_month,
+    t_cb_mod_inc_st.pc,
+    t_cb_mod_inc_st.l_1,
+    t_cb_mod_inc_st.l_2,
+    t_cb_mod_inc_st.l_3,
+    t_cb_mod_inc_st.l_4,
+    t_cb_mod_inc_st.l_5,
+    t_cb_mod_inc_st.l_6,
+    t_cb_mod_inc_st.inc_total,
+    t_cb_mod_inc_st.curr,
+        CASE
+            WHEN t_cb_mod_inc_st.curr::text = 'USD'::text THEN t_cb_mod_inc_st.inc_total
+            ELSE
+            CASE
+                WHEN t_cb_mod_inc_st.curr::text = 'EUR'::text THEN t_cb_mod_inc_st.inc_total * mon_curr_rates.r_eur_usd::double precision
+                ELSE t_cb_mod_inc_st.inc_total * mon_curr_rates.r_try_usd::double precision
+            END
+        END AS usd_income,
+    'USD'::text AS up_curr_conv,
+    t_cb_mod_inc_st.inc_base_mon AS month,
+    t_cb_mod_inc_st.key_r_pc_l6,
+    mon_curr_rates.r_usd_try,
+    mon_curr_rates.r_try_usd
+   FROM t_cb_mod_inc_st
+     LEFT JOIN mon_curr_rates ON t_cb_mod_inc_st.rep_month::text = mon_curr_rates.rep_month::text AND t_cb_mod_inc_st.inc_base_mon = mon_curr_rates.month;
+
+ALTER TABLE q_cb_mod_inc_usd
+    OWNER TO ictasadmin;
+
+
+
 Raise notice 'Deleting existing data';
-Delete from t_cb_inc_usd_st;
+Delete from t_cb_mod_inc_usd_st;
 Raise notice 'Appending new data';
 
-Insert into t_cb_inc_usd_st
+
+
+
+Insert into t_cb_mod_inc_usd_st
 
 Select 
 q_cb_mod_inc_usd.rep_month, 

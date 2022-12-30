@@ -141,14 +141,14 @@ CREATE TEMPORARY TABLE IF NOT EXISTS t_cb_mod_indexes
 (
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
     month date NOT NULL,
-    bb_metal numeric(18,4),
-    bb_electricity numeric(18,4),
-    bb_cement numeric(18,4),
-    bb_petrol numeric(18,4),
-    bb_inf_usd numeric(18,4),
-    bb_inf_eur numeric(18,4),
-    bb_ufe numeric(18,4),
-    bb_tufe numeric(18,4)
+    bb_metal numeric(18,10),
+    bb_electricity numeric(18,10),
+    bb_cement numeric(18,10),
+    bb_petrol numeric(18,10),
+    bb_inf_usd numeric(18,10),
+    bb_inf_eur numeric(18,10),
+    bb_ufe numeric(18,10),
+    bb_tufe numeric(18,10)
 )
 
 TABLESPACE pg_default;
