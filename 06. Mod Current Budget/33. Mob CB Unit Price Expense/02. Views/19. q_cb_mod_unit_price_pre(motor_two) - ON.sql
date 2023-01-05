@@ -1,7 +1,3 @@
--- View: public.q_cb_mod_unit_price_pre
-
--- DROP VIEW public.q_cb_mod_unit_price_pre;
-
 CREATE TEMPORARY VIEW q_cb_mod_unit_price_pre
  AS
  SELECT q_cb_mod_up_pre_coeff_activem_indexes.rep_month,
@@ -111,4 +107,3 @@ CREATE TEMPORARY VIEW q_cb_mod_unit_price_pre
 
 ALTER TABLE public.q_cb_mod_unit_price_pre
     OWNER TO ictasadmin;
-
