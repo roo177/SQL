@@ -1,3 +1,7 @@
+Option Base 1
+
+
+
 Function modify()
 Dim wkbk As Workbook
 Dim wks As Worksheet
@@ -11,6 +15,7 @@ Dim formatCur$, formatDate$, intColor&, colsCurrency$, colsDate$, fnExportToWork
 projectname = "MAHMUTBEY - ESENYURT METRO HATTI PROJESİ"
 rep_month = "2203"
 
+GoTo Skip_Last:
 On Error Resume Next
 wkbk.Sheets("BÜTÇE TOPLAM").Delete
 wkbk.Sheets("L6 KODLAR").Delete
@@ -24,7 +29,7 @@ wkbk.Sheets("ENDEKS ARTIŞ").Move After:=wkbk.Sheets("AYLIK ENDEKSLER")
 
 i = 1
 For Each one In wkbk.Sheets
-Debug.Print Sheets(i).Name
+'Debug.Print Sheets(i).Name
 i = i + 1
 Next
 
@@ -33,7 +38,7 @@ wkbk.Sheets("TOPLAM GELİR").Tab.Color = RGB(195, 215, 155)
 wkbk.Sheets("TOPLAM GİDER").Tab.Color = RGB(150, 54, 52)
 wkbk.Sheets("GENEL TOPLAM").Tab.Color = RGB(149, 179, 215)
         
-Debug.Print wkbk.Sheets.Count
+'Debug.Print wkbk.Sheets.Count
 
     wkbk.Sheets.Add After:=wkbk.Sheets(wkbk.Sheets.Count)
     wkbk.Sheets(wkbk.Sheets.Count).Name = "L6 KODLAR"
@@ -442,7 +447,7 @@ wkbk.Sheets("L3 KODLAR").Delete
     Dim k, m, n, t, l, c As Long
     Dim lRow As Long
     Dim rng As Range
-    Dim cell As Range
+    Dim cell, start_cell As Range
     Dim WS As Worksheet
     Dim myValue As Variant
     Set WS = ActiveSheet
@@ -647,7 +652,7 @@ Next j
         .Weight = xlHairline
     End With
     wkbk.Sheets("BÜTÇE TOPLAM").Cells(2, 2).Select
-    wkbk.Sheets("BÜTÇE TOPLAM").Cells(2, 2).Value = FORMAT(Date, "dd" & " " & "mmmm" & " " & "yyyy")
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(2, 2).Value = Format(Date, "dd" & " " & "mmmm" & " " & "yyyy")
     
     With Selection
         .HorizontalAlignment = xlCenter
@@ -677,7 +682,7 @@ Next j
     End With
     
     wkbk.Sheets("BÜTÇE TOPLAM").Cells(3, 2).Select
-    wkbk.Sheets("BÜTÇE TOPLAM").Cells(3, 2).Value = FORMAT(Time, "h:mm")
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(3, 2).Value = Format(Time, "h:mm")
     
     With Selection
         .HorizontalAlignment = xlCenter
@@ -884,30 +889,30 @@ Next j
         .Weight = xlMedium
     End With
     
+
+
+'--------------------------------------------FORMAT EXPENSE QTY----------------------------------------------------------
+ 
     wkbk.Sheets("BÜTÇE TOPLAM").Columns("E:E").ColumnWidth = 1
+
+    For k = 1 To 2
     wkbk.Sheets("BÜTÇE TOPLAM").Columns("F:F").Select
     wkbk.Sheets("BÜTÇE TOPLAM").Columns("F:F").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
     
     Dim Expense_Start_Date, Income_Start_Date, Expense_End_Date, Income_End_Date As Date
-    
     Expense_Start_Date = wkbk.Sheets("TOPLAM GİDER").Cells(1, 5).Value
     
     Dim lastcolumn_excel As Integer
-    
     lastcolumn_excel = wkbk.Sheets("TOPLAM GİDER").Cells(1, wkbk.Sheets("TOPLAM GİDER").Columns.Count).End(xlToLeft).Column
     
     Expense_End_Date = wkbk.Sheets("TOPLAM GİDER").Cells(1, lastcolumn_excel).Value
-     
     Income_Start_Date = wkbk.Sheets("TOPLAM GELİR").Cells(1, 7).Value
     
     lastcolumn_excel = wkbk.Sheets("TOPLAM GELİR").Cells(1, wks.Columns.Count).End(xlToLeft).Column
-    
     Income_End_Date = wkbk.Sheets("TOPLAM GELİR").Cells(1, lastcolumn_excel).Value
-     
-    
-    Dim datedifferencemon As Integer
-    
-    
+
+    Dim datedifferencemon%
+
     datedifferencemon = DateDiff("m", Expense_Start_Date, Expense_End_Date) + 1
     Set wks = wkbk.Sheets("BÜTÇE TOPLAM")
   
@@ -917,40 +922,716 @@ Next j
     For i = 1 To datedifferencemon
     
         If i = 1 Then
-        wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Value = Year(Expense_Start_Date)
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Value = Expense_Start_Date
         Else
         wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Formula = "=+EDATE(" & ColumnLetter(i + 5 - 1, wks) & "5,1)"
         End If
         
     Next i
+    Next k
+      
+'--------------------------------------------------------BRING EXPENSE QUANTITY--------------------------------------------------------
     
-   Dim ColumnNames_Array_Excel() As String
-   Dim u As Integer
-   u = 1
-   ReDim ColumnNames_Array_Excel(u + 1)
-   
-   For i = 1 To datedifferencemon
+    If wkbk.Sheets("GİDER MİKTAR").Cells(1, 3).Value = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Value Then
     
-        If i = 1 Then ColumnNames_Array_Excel(1) = "F:F"
+        Start_column% = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Column
+     
+    ElseIf wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Value < wkbk.Sheets("GİDER MİKTAR").Cells(1, 3).Value Then
+    
+        Start_column% = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Column + DateDiff("m", wkbk.Sheets("GİDER MİKTAR").Cells(1, 3).Value, wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Value)
+     
+    End If
+    
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("A12").End(xlDown).Row
+    
+'-----------------------------------------------------LEVEL 4 EXP QTY---------------------------------------------------------------------------
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Select
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Find(What:="SEVİYE", After:=ActiveCell, LookIn:=xlFormulas2, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False, SearchFormat:=False).Activate
+
+    filter_column% = ActiveCell.Column
+
+    For i = 12 To Rowcount
+    
+        If wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, filter_column).Value = "4" Then
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column).Formula = "=+IFERROR(SUMIFS('GİDER MİKTAR'!C:C,'GİDER MİKTAR'!$A:$A,'BÜTÇE TOPLAM'!$B" & i & "),"""")"
+        start_row% = i
+        GoTo end_loop_start_date
+        End If
         
-        If i > 1 Then
+    Next i
+    
+end_loop_start_date:
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F5").Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(Range(ColumnLetter(Selection.Column, wks) & "5"), ColumnLetter(Selection.Column, wks) & Rowcount).AutoFilter
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("$" & ColumnLetter(Selection.Column, wks) & "$5:$" & ColumnLetter(Selection.Column, wks) & "$" & Rowcount).AutoFilter Field:=1, Criteria1:="4"
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F" & Rowcount).Select
+    Selection.End(xlUp).Select
+    rowactive% = Selection.Row
+    Selection.Copy
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F" & Selection.Row & ":F" & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
         
-            If (Year(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Value) + Month(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Value)) Mod 12 = 0 Then
-                ColumnNames_Array_Excel(1 + u) = ColumnLetter(i + 5, wks) & ":" & ColumnLetter(i + 5, wks)
-                u = u + 1
-                ReDim ColumnNames_Array_Excel(u + 1)
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:F" & Rowcount).Select
+    Selection.Copy
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F5").Select
+    Selection.End(xlToRight).Select
+    lastcolumn = Selection.Column
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:" & ColumnLetter(columnactive%, wks) & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+        
+    'Call Expense_Add_Years
+    
+    colstr = "F12:F" & Rowcount
+    fillrange = "F12:" & ColumnLetter(lastcolumn, wks) & Rowcount
+    Set SourceRange = wks.Range(colstr)
+    Set fillranged = wks.Range(fillrange)
+    SourceRange.AutoFill Destination:=fillranged
+    
+'------------------------------------------EXPENSE-------------------------------------------------------------
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F5").Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Start_column = Selection.Column
+    
+    If Selection.Value = wkbk.Sheets("TOPLAM GİDER").Cells(1, 5).Value Then
+    
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Formula = "=+SUMIFS('TOPLAM GİDER'!E:E,'TOPLAM GİDER'!$A:$A,'BÜTÇE TOPLAM'!$B" & start_row & ",'TOPLAM GİDER'!$C:$C,'BÜTÇE TOPLAM'!$D" & start_row & ")"
+        
+        ElseIf wkbk.Sheets("TOPLAM GİDER").Cells(1, 5).Value < Selection.Value Then
+        
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Formula = "=+SUMIFS('TOPLAM GİDER'!" & ColumnLetter(5 + DateDiff("m", wkbk.Sheets("TOPLAM GİDER").Cells(1, 5).Value, wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Value), wks) & ":" & ColumnLetter(5 + columnactive%, wks) & ",'TOPLAM GİDER'!$A:$A,'BÜTÇE TOPLAM'!$B" & start_row & ",'TOPLAM GİDER'!$C:$C,'BÜTÇE TOPLAM'!$D" & start_row & ")"
+         
+    End If
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Copy
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Row & ":" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    
+    colstr = ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & start_row & ":" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & Rowcount
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_column).Select
+    wkbk.Sheets("BÜTÇE TOPLAM").ShowAllData
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Find(What:="SEVİYE", After:=ActiveCell, LookIn:=xlFormulas2, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False, SearchFormat:=False).Activate
+
+    filter_column = ActiveCell.Column
+
+'---------------------------------------------------SUBTOTALS----------------------------------------------------
+
+    Dim first_formula As Boolean
+    
+    For j = 1 To 3
+    
+        first_formula = True
+        Set cell = Nothing
+        
+        For i = Rowcount To 12 Step -1
             
+                If first_formula Then
+                    
+
+                    If wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, filter_column).Value = j Then
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column).Formula = "=+SUBTOTAL(9," & ColumnLetter(Start_column, wks) & i + 1 & ":" & ColumnLetter(Start_column, wks) & Rowcount & ")"
+                    Set cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column)
+                    first_formula = False
+                    End If
+
+                ElseIf wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, filter_column).Value = j And Not first_formula Then
+                    
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column).Formula = "=+SUBTOTAL(9," & ColumnLetter(Start_column, wks) & i + 1 & ":" & ColumnLetter(Start_column, wks) & cell.Row - 1 & ")"
+                    Set cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column)
+                    
+                ElseIf wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, filter_column).Value < j Then
+                Set cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column)
+                    
+                End If
+
+        Next i
+        
+    Next j
+
+    
+ '--------------------------------------AUTOFILL COLUMNS----------------------------------------------------------
+    
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_column).Select
+    Selection.End(xlToRight).Select
+    lastcolumn = Selection.Column
+    
+    colstr = ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & "12" & ":" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & Rowcount
+    fillrange = ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & "12" & ":" & ColumnLetter(lastcolumn, wks) & Rowcount
+    Set SourceRange = wks.Range(colstr)
+    Set fillranged = wks.Range(fillrange)
+    SourceRange.AutoFill Destination:=fillranged
+    
+    
+ '--------------------------------------------FORMAT INCOME QTY COLUMNS----------------------------------------------------------
+    
+    For k = 1 To 2
+    wkbk.Sheets("BÜTÇE TOPLAM").Columns("F:F").Select
+    wkbk.Sheets("BÜTÇE TOPLAM").Columns("F:F").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+
+    lastcolumn_excel = wkbk.Sheets("TOPLAM GELİR").Cells(1, wkbk.Sheets("TOPLAM GİDER").Columns.Count).End(xlToLeft).Column
+    
+    Income_Start_Date = wkbk.Sheets("TOPLAM GELİR").Cells(1, 7).Value
+    Income_End_Date = wkbk.Sheets("TOPLAM GELİR").Cells(1, lastcolumn_excel).Value
+    
+    datedifferencemon = DateDiff("m", Income_Start_Date, Income_End_Date) + 1
+    Set wks = wkbk.Sheets("BÜTÇE TOPLAM")
+  
+    wkbk.Sheets("BÜTÇE TOPLAM").Columns("F:" & ColumnLetter(datedifferencemon + 5, wks)).Select
+    Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    
+    For i = 1 To datedifferencemon
+    
+        If i = 1 Then
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Value = Income_Start_Date
+        Else
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Formula = "=+EDATE(" & ColumnLetter(i + 5 - 1, wks) & "5,1)"
+        End If
+        
+    Next i
+    Next k
+    
+'--------------------------------------------------------BRING INCOME QUANTITY--------------------------------------------------------
+    
+    If wkbk.Sheets("GELİR MİKTAR").Cells(1, 3).Value = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Value Then
+    
+        Start_column% = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Column
+     
+    ElseIf wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Value < wkbk.Sheets("GELİR MİKTAR").Cells(1, 3).Value Then
+    
+        Start_column% = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Column + DateDiff("m", wkbk.Sheets("GELİR MİKTAR").Cells(1, 3).Value, wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Value)
+     
+    End If
+    
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("A12").End(xlDown).Row
+        
+'-----------------------------------------------------LEVEL 4 INC QTY---------------------------------------------------------------------------
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Select
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Find(What:="SEVİYE", After:=ActiveCell, LookIn:=xlFormulas2, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False, SearchFormat:=False).Activate
+
+    filter_column = ActiveCell.Column
+    
+    For i = 12 To Rowcount
+    
+        If wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, filter_column).Value = "4" Then
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column).Formula = "=+IFERROR(SUMIFS('GELİR MİKTAR'!C:C,'GELİR MİKTAR'!$A:$A,'BÜTÇE TOPLAM'!$B" & i & "),"""")"
+        start_row = i
+        GoTo end_loop_start_date_inc
+        End If
+        
+    Next i
+    
+end_loop_start_date_inc:
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(Range(ColumnLetter(filter_column, wks) & "5"), ColumnLetter(filter_column, wks) & Rowcount).AutoFilter
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("$" & ColumnLetter(filter_column, wks) & "$5:$" & ColumnLetter(filter_column, wks) & "$" & Rowcount).AutoFilter Field:=1, Criteria1:="4"
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F" & Rowcount).Select
+    Selection.End(xlUp).Select
+    rowactive% = Selection.Row
+    Selection.Copy
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F" & Selection.Row & ":F" & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+        
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:F" & Rowcount).Select
+    Selection.Copy
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F5").Select
+    Selection.End(xlToRight).Select
+    lastcolumn = Selection.Column
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:" & ColumnLetter(columnactive%, wks) & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+        
+    'Call Expense_Add_Years
+    
+    colstr = "F12:F" & Rowcount
+    fillrange = "F12:" & ColumnLetter(lastcolumn, wks) & Rowcount
+    Set SourceRange = wks.Range(colstr)
+    Set fillranged = wks.Range(fillrange)
+    SourceRange.AutoFill Destination:=fillranged
+    
+'------------------------------------------INCOME-------------------------------------------------------------
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F5").Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Start_column = Selection.Column
+    
+    If Selection.Value = wkbk.Sheets("TOPLAM GELİR").Cells(1, 7).Value Then
+    
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Formula = "=+SUMIFS('TOPLAM GELİR'!G:G,'TOPLAM GELİR'!$A:$A,'BÜTÇE TOPLAM'!$B" & start_row & ",'TOPLAM GELİR'!$E:$E,'BÜTÇE TOPLAM'!$D" & start_row & ")"
+        
+        ElseIf wkbk.Sheets("TOPLAM GELİR").Cells(1, 7).Value < Selection.Value Then
+        
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Formula = "=+SUMIFS('TOPLAM GELİR'!" & ColumnLetter(7 + DateDiff("m", wkbk.Sheets("TOPLAM GELİR").Cells(1, 7).Value, wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Value), wks) & ":" & ColumnLetter(5 + columnactive%, wks) & ",'TOPLAM GELİR'!$A:$A,'BÜTÇE TOPLAM'!$B" & start_row & ",'TOPLAM GELİR'!$C:$C,'BÜTÇE TOPLAM'!$D" & start_row & ")"
+         
+    End If
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Copy
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Row & ":" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    
+    colstr = ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & start_row & ":" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & Rowcount
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_column).Select
+    wkbk.Sheets("BÜTÇE TOPLAM").ShowAllData
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Select
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Find(What:="SEVİYE", After:=ActiveCell, LookIn:=xlFormulas2, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False, SearchFormat:=False).Activate
+
+    filter_column = ActiveCell.Column
+    
+'---------------------------------------------------SUBTOTALS----------------------------------------------------
+
+    For j = 1 To 3
+    
+        first_formula = True
+        Set cell = Nothing
+        
+        For i = Rowcount To 12 Step -1
+            
+                If first_formula Then
+
+                    If wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, filter_column).Value = j Then
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column).Formula = "=+SUBTOTAL(9," & ColumnLetter(Start_column, wks) & i + 1 & ":" & ColumnLetter(Start_column, wks) & Rowcount & ")"
+                    Set cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column)
+                    first_formula = False
+                    End If
+
+                ElseIf wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, filter_column).Value = j And Not first_formula Then
+                    
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column).Formula = "=+SUBTOTAL(9," & ColumnLetter(Start_column, wks) & i + 1 & ":" & ColumnLetter(Start_column, wks) & cell.Row - 1 & ")"
+                    Set cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column)
+                    
+                ElseIf wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, filter_column).Value < j Then
+                Set cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(i, Start_column)
+                    
+                End If
+
+        Next i
+        
+    Next j
+  
+'--------------------------------------AUTOFILL COLUMNS------------------------------------------------------------
+    
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_column).Select
+    Selection.End(xlToRight).Select
+    lastcolumn = Selection.Column
+    
+    colstr = ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & "12" & ":" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & Rowcount
+    fillrange = ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, Start_column).Column, wks) & "12" & ":" & ColumnLetter(lastcolumn, wks) & Rowcount
+    Set SourceRange = wks.Range(colstr)
+    Set fillranged = wks.Range(fillrange)
+    SourceRange.AutoFill Destination:=fillranged
+       
+    
+'--------------------------------------------FORMAT PROFIT----------------------------------------------------------
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Columns("F:F").Select
+    wkbk.Sheets("BÜTÇE TOPLAM").Columns("F:F").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+
+    Expense_Start_Date = wkbk.Sheets("TOPLAM GİDER").Cells(1, 5).Value
+    lastcolumn_excel = wkbk.Sheets("TOPLAM GİDER").Cells(1, wkbk.Sheets("TOPLAM GİDER").Columns.Count).End(xlToLeft).Column
+    Expense_End_Date = wkbk.Sheets("TOPLAM GİDER").Cells(1, lastcolumn_excel).Value
+    
+    Income_Start_Date = wkbk.Sheets("TOPLAM GELİR").Cells(1, 7).Value
+    lastcolumn_excel = wkbk.Sheets("TOPLAM GELİR").Cells(1, wks.Columns.Count).End(xlToLeft).Column
+    Income_End_Date = wkbk.Sheets("TOPLAM GELİR").Cells(1, lastcolumn_excel).Value
+
+    If Expense_Start_Date < Income_Start_Date Then Income_Start_Date = Expense_Start_Date Else Income_Start_Date = Income_Start_Date
+    If Expense_End_Date < Income_End_Date Then Income_End_Date = Expense_End_Date Else Income_End_Date = Income_End_Date
+    
+    datedifferencemon = DateDiff("m", Income_Start_Date, Income_End_Date) + 1
+    Set wks = wkbk.Sheets("BÜTÇE TOPLAM")
+  
+    wkbk.Sheets("BÜTÇE TOPLAM").Columns("F:" & ColumnLetter(datedifferencemon + 5, wks)).Select
+    Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+  
+    For i = 1 To datedifferencemon
+    
+        If i = 1 Then
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Value = Income_Start_Date
+        Else
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, i + 5).Formula = "=+EDATE(" & ColumnLetter(i + 5 - 1, wks) & "5,1)"
+        End If
+        
+    Next i
+
+'--------------------------------------------------------------PROFIT-----------------------------------------------------------------
+
+    Set wks = wkbk.Sheets("BÜTÇE TOPLAM")
+    Dim Profit_Start_Cell, Profit_End_Cell, Income_Start_Cell, Income_End_Cell, Expense_Start_Cell, Expense_End_Cell, Second_Start_Cell, Second_End_Cell As Range
+    Dim Profit_Start_Date, Profit_End_Date, Second_Start_Date, Second_End_Date As Date
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Select
+    Profit_Start_Date = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Value
+    Set Profit_Start_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6)
+    Selection.End(xlToRight).Select
+    Profit_End_Date = Selection.Value
+    Set Profit_End_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Income_Start_Date = Selection.Value
+    Set Income_Start_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    Selection.End(xlToRight).Select
+    Income_End_Date = Selection.Value
+    Set Income_End_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Expense_Start_Date = Selection.Value
+    Set Expense_Start_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    Selection.End(xlToRight).Select
+    Expense_End_Date = Selection.Value
+    Set Expense_End_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Select
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Find(What:="SEVİYE", After:=ActiveCell, LookIn:=xlFormulas2, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False, SearchFormat:=False).Activate
+
+    filter_column = ActiveCell.Column
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    
+
+    start_row = 12
+
+'------------------------------------------PROFIT CALCULATION----------------------------------------------------------------
+
+    If Profit_Start_Date = Income_Start_Date And Profit_Start_Date = Expense_Start_Date Then
+ 
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, 6).Formula = "=" & ColumnLetter(Income_Start_Cell.Column, wks) & start_row & "-" & ColumnLetter(Expense_Start_Cell.Column, wks) & start_row & ""
+
+    Else
+    
+        wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, 6).Formula = "=" & ColumnLetter(Income_Start_Cell.Column + DateDiff("m", Income_Start_Date, Profit_Start_Date), wks) & start_row & "-" & ColumnLetter(Expense_Start_Cell.Column + DateDiff("m", Expense_Start_Date, Profit_Start_Date), wks) & start_row & ""
+    
+    End If
+   
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, 6).Copy
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:F" & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    
+'----------------------------------------------PROFIT FILL COLUMNS--------------------------------------------------------------
+
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:F" & Rowcount).Copy
+    
+    If Profit_End_Date = Income_End_Date And Profit_End_Date = Expense_End_Date Then
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:" & ColumnLetter(Profit_End_Cell.Column, wks) & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    
+    ElseIf Profit_End_Date = Income_End_Date And Profit_End_Date <> Expense_End_Date Then
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:" & ColumnLetter(Profit_End_Cell.Column, wks) & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+        
+    Second_Start_Date = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Profit_End_Cell.Column - DateDiff("m", Expense_End_Date, Profit_End_Date))
+    
+    Set Second_Start_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(12, Profit_End_Cell.Column - DateDiff("m", Expense_End_Date, Profit_End_Date))
+    
+    Second_Start_Cell.Formula = "=+" & ColumnLetter(Income_Start_Cell.Column + DateDiff("m", Second_Start_Date, Profit_Start_Date), wks) & "12"
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, ColumnLetter(Second_Start_Cell.Column, wks)).Copy
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(ColumnLetter(Second_Start_Cell.Column, wks) & "12:" & ColumnLetter(Second_Start_Cell.Column, wks) & Rowcount).Select
+    
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+
+    ElseIf Profit_End_Date <> Income_End_Date And Profit_End_Date = Expense_End_Date Then
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F12:" & ColumnLetter(Profit_End_Cell.Column, wks) & Rowcount).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+        
+    Second_Start_Date = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Profit_End_Cell.Column - DateDiff("m", Income_End_Date, Profit_End_Date))
+    
+    Set Second_Start_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(12, Profit_End_Cell.Column - DateDiff("m", Income_End_Date, Profit_End_Date))
+    
+    Second_Start_Cell.Formula = "=-" & ColumnLetter(Expense_Start_Cell.Column + DateDiff("m", Second_Start_Date, Profit_Start_Date), wks) & "12"
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("$" & ColumnLetter(filter_column, wks) & "$5:$" & ColumnLetter(filter_column, wks) & "$" & Rowcount).AutoFilter Field:=1, Criteria1:="4"
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(start_row, ColumnLetter(Second_Start_Cell.Column, wks)).Copy
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(ColumnLetter(Second_Start_Cell.Column, wks) & "12:" & ColumnLetter(Second_Start_Cell.Column, wks) & Rowcount).Select
+    
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+            
+    End If
+    
+Skip_Last:
+
+'-------------------------------------------DELETE LATER---------------------------------------------------------------------------------
+    Set wks = wkbk.Sheets("BÜTÇE TOPLAM")
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Select
+    Profit_Start_Date = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6).Value
+    Set Profit_Start_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, 6)
+    Selection.End(xlToRight).Select
+    Profit_End_Date = Selection.Value
+    Set Profit_End_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Income_Start_Date = Selection.Value
+    Set Income_Start_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    Selection.End(xlToRight).Select
+    Income_End_Date = Selection.Value
+    Set Income_End_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Selection.End(xlToRight).Select
+    Expense_Start_Date = Selection.Value
+    Set Expense_Start_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    Selection.End(xlToRight).Select
+    formatDate$ = "dd.mm.yyyy"
+    
+    Selection.NumberFormat = formatDate$
+    Expense_End_Date = Selection.Value
+    
+    Set Expense_End_Cell = wkbk.Sheets("BÜTÇE TOPLAM").Cells(Selection.Row, Selection.Column)
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Select
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Find(What:="SEVİYE", After:=ActiveCell, LookIn:=xlFormulas2, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False, SearchFormat:=False).Activate
+
+    filter_column = ActiveCell.Column
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    
+'--------------------------------------------------------------------------------------------------------------------------------------------------
+
+    Set wks = wkbk.Sheets("BÜTÇE TOPLAM")
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Select
+    wkbk.Sheets("BÜTÇE TOPLAM").Rows("5:5").Find(What:="SEVİYE", After:=ActiveCell, LookIn:=xlFormulas2, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False, SearchFormat:=False).Activate
+
+    filter_column = ActiveCell.Column
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(8, Profit_Start_Cell.Column).Formula = "=+SUMIFS(F$12:F$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D8, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(9, Profit_Start_Cell.Column).Formula = "=+SUMIFS(F$12:F$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D9, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(10, Profit_Start_Cell.Column).Formula = "=+SUMIFS(F$12:F$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D10, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F8:F10").Copy
+    wkbk.Sheets("BÜTÇE TOPLAM").Range("F8:" & ColumnLetter(Profit_End_Cell.Column, wks) & "10").Select
+    
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(8, Income_Start_Cell.Column).Formula = "=+SUMIFS(" & ColumnLetter(Income_Start_Cell.Column, wks) & "$12:" & ColumnLetter(Income_Start_Cell.Column, wks) & "$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D8, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(9, Income_Start_Cell.Column).Formula = "=+SUMIFS(" & ColumnLetter(Income_Start_Cell.Column, wks) & "$12:" & ColumnLetter(Income_Start_Cell.Column, wks) & "$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D9, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(10, Income_Start_Cell.Column).Formula = "=+SUMIFS(" & ColumnLetter(Income_Start_Cell.Column, wks) & "$12:" & ColumnLetter(Income_Start_Cell.Column, wks) & "$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D10, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(ColumnLetter(Income_Start_Cell.Column, wks) & "8:" & ColumnLetter(Income_Start_Cell.Column, wks) & "10").Copy
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(ColumnLetter(Income_Start_Cell.Column, wks) & "8:" & ColumnLetter(Income_End_Cell.Column, wks) & "10").Select
+    
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+        
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(8, Expense_Start_Cell.Column).Formula = "=+SUMIFS(" & ColumnLetter(Expense_Start_Cell.Column, wks) & "$12:" & ColumnLetter(Expense_Start_Cell.Column, wks) & "$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D8, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(9, Expense_Start_Cell.Column).Formula = "=+SUMIFS(" & ColumnLetter(Expense_Start_Cell.Column, wks) & "$12:" & ColumnLetter(Expense_Start_Cell.Column, wks) & "$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D9, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(10, Expense_Start_Cell.Column).Formula = "=+SUMIFS(" & ColumnLetter(Expense_Start_Cell.Column, wks) & "$12:" & ColumnLetter(Expense_Start_Cell.Column, wks) & "$" & Rowcount & ",$D$12:$D$" & Rowcount & ",$D10, $" & ColumnLetter(filter_column, wks) & "12:$" & ColumnLetter(filter_column, wks) & Rowcount & ",""4"")"
+    
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(ColumnLetter(Expense_Start_Cell.Column, wks) & "8:" & ColumnLetter(Expense_Start_Cell.Column, wks) & "10").Copy
+    wkbk.Sheets("BÜTÇE TOPLAM").Range(ColumnLetter(Expense_Start_Cell.Column, wks) & "8:" & ColumnLetter(Expense_End_Cell.Column, wks) & "10").Select
+    
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    
+    Call Add_Years(Expense_Start_Cell.Column, DateDiff("m", Expense_Start_Date, Expense_End_Date), True)
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+ End Function
+   
+Private Function Add_Years(Start_Range_column As Integer, total_months As Integer, sum_total As Boolean)
+'--------------------------------------------FORMAT EXPENSE ADD YEAR COLUMNS ----------------------------------------------------------
+   Dim wkbk As Workbook 'Deletethis
+   Dim wks As Worksheet 'deletethis
+   Set wkbk = ThisWorkbook 'deletethis
+   
+   Dim ColumnNames_Array_Excel() As String
+   Dim ColumnYearData() As String
+   u% = 1
+
+   ReDim ColumnNames_Array_Excel(u + 1) As String
+   ReDim ColumnYearData(u + 1) As String
+   
+   Set wks = wkbk.Sheets("BÜTÇE TOPLAM")
+   For i = 1 To total_months
+    
+        If i = 1 Then
+        
+        ColumnNames_Array_Excel(u) = ColumnLetter(Start_Range_column, wks) & ":" & ColumnLetter(Start_Range_column, wks)
+        ColumnYearData(u) = Year(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column).Value)
+        
+        ElseIf i > 1 Then
+            
+            If (Year(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i).Value) * 12 + Month(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i).Value)) Mod 12 = 0 Then
+                u = u + 1
+                ReDim Preserve ColumnYearData(u) As String
+                ReDim Preserve ColumnNames_Array_Excel(u) As String
+                ColumnNames_Array_Excel(u) = ColumnLetter(Start_Range_column + i + u, wkbk.Sheets("BÜTÇE TOPLAM")) & ":" & ColumnLetter(Start_Range_column + i + u, wkbk.Sheets("BÜTÇE TOPLAM"))
+                ColumnYearData(u) = Year(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i + 1).Value)
+                
+            ElseIf i = total_months - 1 And (Year(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i).Value) * 12 + Month(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i).Value)) Mod 12 <> 0 Then
+                u = u + 1
+                ReDim Preserve ColumnYearData(u) As String
+                ReDim Preserve ColumnNames_Array_Excel(u) As String
+                ColumnNames_Array_Excel(u) = ColumnLetter(Start_Range_column + i + u - 1 - ((Year(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i - 1).Value) * 12 + Month(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i - 1).Value)) Mod 12), wks) & ":" & ColumnLetter(Start_Range_column + i + u - 1 - ((Year(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i - 1).Value) * 12 + Month(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i - 1).Value)) Mod 12), wkbk.Sheets("BÜTÇE TOPLAM"))
+                ColumnYearData(u) = Year(wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, Start_Range_column + i - 1))
+                
             End If
             
         End If
         
     Next i
     
-    For i = 1 To UBound(ColumnNames_Array_Excel) - 1
+    
+    For i = 1 To (UBound(ColumnNames_Array_Excel))
     
     wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Select
-    Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    Selection.Insert Shift:=xlToLeft, CopyOrigin:=xlFormatFromLeftOrAbove
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Value = ColumnYearData(i)
+    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).NumberFormat = "General"
+
+    Next i
     
+    If sum_total Then
+    
+            For i = 1 To (UBound(ColumnNames_Array_Excel))
+            
+                    If i < UBound(ColumnNames_Array_Excel) Then
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(8, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Formula = "=+SUBTOTAL(9," & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & "8:" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i + 1)).Column - 1, wks) & "8)"
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(9, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Formula = "=+SUBTOTAL(9," & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & "9:" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i + 1)).Column - 1, wks) & "9)"
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(10, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Formula = "=+SUBTOTAL(9," & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & "10:" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i + 1)).Column - 1, wks) & "10)"
+                    
+                    
+                    Else
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(8, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i - 1)).Column).Select
+                    Selection.End(xlToRight).Select
+                    Selection.End(xlToRight).Select
+                    
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(8, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Formula = "=+SUBTOTAL(9," & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & "8:" & ColumnLetter(Selection.Column, wks) & "8)"
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(9, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Formula = "=+SUBTOTAL(9," & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & "9:" & ColumnLetter(Selection.Column, wks) & "9)"
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(10, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Formula = "=+SUBTOTAL(9," & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & "10:" & ColumnLetter(Selection.Column, wks) & "10)"
+                    End If
+                    
+                
+            Next i
+    
+    
+    End If
+    
+
+
+    For i = 1 To (UBound(ColumnNames_Array_Excel))
+        
+        
+        If i < UBound(ColumnNames_Array_Excel) Then
+        
+                    wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & ":" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i + 1)).Column - 1, wks)).Group
+
+        Else
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(5, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Select
+                    Selection.End(xlToRight).Select
+                    
+                    wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & ":" & ColumnLetter(Selection.Column, wks)).Group
+        End If
+    
+    Next i
+    
+    For i = 1 To (UBound(ColumnNames_Array_Excel))
+    
+        If i < UBound(ColumnNames_Array_Excel) Then
+                    
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(12, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Formula = "=+SUBTOTAL(9," & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & "12:" & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i + 1)).Column - 1, wks) & "12)"
+                    
+        Else
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(12, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i - 1)).Column).Select
+                    Selection.End(xlToRight).Select
+                    Selection.End(xlToRight).Select
+                    
+                    wkbk.Sheets("BÜTÇE TOPLAM").Cells(12, wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column).Formula = "=+SUBTOTAL(9," & ColumnLetter(wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column + 1, wks) & "12:" & ColumnLetter(Selection.Column, wks) & "12)"
+        End If
+        
+    Rowcount = wkbk.Sheets("BÜTÇE TOPLAM").Range("D12").End(xlDown).Row
+    colstr = ColumnLetter((wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column), wks) & "12" & ":" & ColumnLetter((wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column), wks) & "12"
+    fillrange = ColumnLetter((wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column), wks) & "12" & ":" & ColumnLetter((wkbk.Sheets("BÜTÇE TOPLAM").Columns(ColumnNames_Array_Excel(i)).Column), wks) & Rowcount
+    Set SourceRange = wks.Range(colstr)
+    Set fillranged = wks.Range(fillrange)
+    SourceRange.AutoFill Destination:=fillranged
+        
+
     Next i
     
     
