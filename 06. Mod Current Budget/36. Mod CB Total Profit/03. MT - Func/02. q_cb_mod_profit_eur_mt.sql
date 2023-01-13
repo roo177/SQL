@@ -33,7 +33,8 @@ CREATE TEMPORARY TABLE IF NOT EXISTS t_cb_mod_profit_eur_st
     key_r_pc_l6 character varying(50) COLLATE pg_catalog."default",
     unit character varying(50) collate pg_catalog."default",
     desc_tr_l4 character varying(255) collate pg_catalog."default",
-    desc_tr_l5 character varying(255) collate pg_catalog."default"
+    desc_tr_l5 character varying(255) collate pg_catalog."default",
+    desc_tr_l1 character varying(255) collate pg_catalog."default"
 )
 
 
@@ -113,12 +114,14 @@ q_cb_mod_profit_eur.key_r_pc_l6
     ,c6_code.unit
 	,c4_code.desc_tr_l4
 	,c5_code.desc_tr_l5
+    ,c1_code.desc_tr_l1
 from ((((q_cb_mod_profit_eur
 	left join c3_code on (q_cb_mod_profit_eur.l_3 = c3_code.c_l3) 
 	and (q_cb_mod_profit_eur.l_2 = c3_code.c_l2) 
 	and (q_cb_mod_profit_eur.l_1 = c3_code.c_l1))
 	left join c2_code on (q_cb_mod_profit_eur.l_2 = c2_code.c_l2) 
 	and (q_cb_mod_profit_eur.l_1 = c2_code.c_l1))
+    left join c1_code on (q_cb_mod_profit_eur.l_1 = c1_code.c_l1)
 	left join c6_code on (q_cb_mod_profit_eur.l_6 = c6_code.c_l6) 
 	and (q_cb_mod_profit_eur.l_5 = c6_code.c_l5) 
 	and (q_cb_mod_profit_eur.l_4 = c6_code.c_l4) 
@@ -152,7 +155,8 @@ c6_code.desc_tr_l6,
 q_cb_mod_profit_eur.key_r_pc_l6	
     ,c6_code.unit
 	,c4_code.desc_tr_l4
-	,c5_code.desc_tr_l5;
+	,c5_code.desc_tr_l5
+    ,c1_code.desc_tr_l1;
 
 RETURN TRUE;
 End;
