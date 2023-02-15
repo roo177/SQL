@@ -1,8 +1,10 @@
--- FUNCTION: q_cb_mod_create_budget_system()
+-- FUNCTION: public.q_cb_mod_create_budget_system(text, text)
 
-DROP FUNCTION IF EXISTS q_cb_mod_create_budget_system();
+DROP FUNCTION IF EXISTS public.q_cb_mod_create_budget_system(text, text);
 
-CREATE OR REPLACE FUNCTION q_cb_mod_create_budget_system(motor_type text, motor_market_status text)
+CREATE OR REPLACE FUNCTION public.q_cb_mod_create_budget_system(
+	motor_type text,
+	motor_market_status text)
     RETURNS void
     LANGUAGE 'plpgsql'
     COST 100
@@ -56,15 +58,15 @@ CREATE TEMPORARY TABLE IF NOT EXISTS t_cb_mod_mon_curr_rates
 (
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
     month date NOT NULL,
-    r_eur_try numeric(12,6),
-    r_usd_try numeric(12,6),
+    r_eur_try numeric(18,10),
+    r_usd_try numeric(18,10),
     r_try_try numeric(2,1) GENERATED ALWAYS AS (1) STORED,
     r_usd_usd numeric(2,1) GENERATED ALWAYS AS (1) STORED,
     r_eur_eur numeric(2,1) GENERATED ALWAYS AS (1) STORED,
-    r_eur_usd numeric(12,6) GENERATED ALWAYS AS ((r_eur_try / r_usd_try)) STORED,
-    r_try_eur numeric(12,6) GENERATED ALWAYS AS (((1)::numeric / r_eur_try)) STORED,
-    r_usd_eur numeric(12,6) GENERATED ALWAYS AS ((r_usd_try / r_eur_try)) STORED,
-    r_try_usd numeric(12,6) GENERATED ALWAYS AS (((1)::numeric / r_usd_try)) STORED
+    r_eur_usd numeric(18,10) GENERATED ALWAYS AS ((r_eur_try / r_usd_try)) STORED,
+    r_try_eur numeric(18,10) GENERATED ALWAYS AS (((1)::numeric / r_eur_try)) STORED,
+    r_usd_eur numeric(18,10) GENERATED ALWAYS AS ((r_usd_try / r_eur_try)) STORED,
+    r_try_usd numeric(18,10) GENERATED ALWAYS AS (((1)::numeric / r_usd_try)) STORED
 )
 ;
 
@@ -139,14 +141,14 @@ CREATE TEMPORARY TABLE IF NOT EXISTS t_cb_mod_indexes
 (
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
     month date NOT NULL,
-    bb_metal numeric(18,4),
-    bb_electricity numeric(18,4),
-    bb_cement numeric(18,4),
-    bb_petrol numeric(18,4),
-    bb_inf_usd numeric(18,4),
-    bb_inf_eur numeric(18,4),
-    bb_ufe numeric(18,4),
-    bb_tufe numeric(18,4)
+    bb_metal numeric(18,10),
+    bb_electricity numeric(18,10),
+    bb_cement numeric(18,10),
+    bb_petrol numeric(18,10),
+    bb_inf_usd numeric(18,10),
+    bb_inf_eur numeric(18,10),
+    bb_ufe numeric(18,10),
+    bb_tufe numeric(18,10)
 )
 
 TABLESPACE pg_default;
@@ -628,8 +630,6 @@ CREATE TEMPORARY VIEW q_cb_mod_up_coeff
      LEFT JOIN q_cb_mod_curr_escalation_rates ON q_cb_mod_res_up_market_coeff.key_full_comb = q_cb_mod_curr_escalation_rates.key_full_comb
   GROUP BY q_cb_mod_res_up_market_coeff.rep_month, q_cb_mod_res_up_market_coeff.pc, q_cb_mod_res_up_market_coeff.l_1, q_cb_mod_res_up_market_coeff.l_2, q_cb_mod_res_up_market_coeff.l_3, q_cb_mod_res_up_market_coeff.l_4, q_cb_mod_res_up_market_coeff.l_5, q_cb_mod_res_up_market_coeff.l_6, q_cb_mod_res_up_market_coeff.rs_l1, q_cb_mod_res_up_market_coeff.rs_l2, q_cb_mod_res_up_market_coeff.rs_l3, q_cb_mod_res_up_market_coeff.rs_l4, q_cb_mod_res_up_market_coeff.month, q_cb_mod_res_up_market_coeff.up_cost_coeff, q_cb_mod_curr_escalation_rates.k_usd, q_cb_mod_curr_escalation_rates.k_eur, (round(q_cb_mod_res_up_market_coeff.up_cost_coeff * q_cb_mod_curr_escalation_rates.k_usd * q_cb_mod_curr_escalation_rates.k_eur, 6)), q_cb_mod_res_up_market_coeff.up_cost, q_cb_mod_res_up_market_coeff.curr, q_cb_mod_res_up_market_coeff.key_full, q_cb_mod_res_up_market_coeff.an_rs_quantity, q_cb_mod_res_up_market_coeff.key_r_pc_l6;
 
-
-
 if motor_market_status = 'ON'
 Then
 
@@ -912,7 +912,6 @@ ORDER  BY q_cb_mod_unit_price_pre.rep_month,
           q_cb_mod_unit_price_pre.l_6,
           q_cb_mod_unit_price_pre.month; 
 
-
 DROP VIEW IF EXISTS q_cb_mod_work_up_with_market_coeff;
 CREATE TEMPORARY VIEW q_cb_mod_work_up_with_market_coeff
  AS
@@ -933,7 +932,6 @@ CREATE TEMPORARY VIEW q_cb_mod_work_up_with_market_coeff
 End IF;
 
 -- View: q_pl_mod_exp
-
 
 DROP VIEW IF EXISTS q_pl_mod_exp;
 
@@ -1150,9 +1148,5 @@ ALTER TABLE q_cb_mod_inc_usd
 END
 $BODY$;
 
-ALTER FUNCTION q_cb_mod_create_budget_system()
+ALTER FUNCTION public.q_cb_mod_create_budget_system(text, text)
     OWNER TO ictasadmin;
-
-
-
-
