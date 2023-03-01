@@ -12,9 +12,9 @@ CREATE TABLE IF NOT EXISTS public.c4_code
     desc_en_l4 character varying(255) COLLATE pg_catalog."default" NOT NULL,
     t_l3 character varying(7) COLLATE pg_catalog."default" NOT NULL,
     t_l4 character varying(2) COLLATE pg_catalog."default" NOT NULL,
-    tmpl_l4 character varying(243) COLLATE pg_catalog."default" NOT NULL,
-    code_l3 character varying(15) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((c_l1)::text || '.'::text) || (c_l2)::text) || '.'::text) || (c_l3)::text)) STORED,
-    code_l4 character varying(15) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((c_l1)::text || '.'::text) || (c_l2)::text) || '.'::text) || (c_l3)::text) || '.'::text) || (c_l4)::text)) STORED,
+    code_l3 character varying(10) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((c_l1)::text || '.'::text) || (c_l2)::text) || '.'::text) || (c_l3)::text)) STORED,
+    code_l4 character varying(12) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((c_l1)::text || '.'::text) || (c_l2)::text) || '.'::text) || (c_l3)::text) || '.'::text) || (c_l4)::text)) STORED,
+    tmpl_14 character(10) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((t_l3)::text || '.'::text) || (t_l4)::text)) STORED,
     CONSTRAINT c4_code_pkey PRIMARY KEY (c_l1, c_l2, c_l3, c_l4),
     CONSTRAINT r__c4_code__c1_code FOREIGN KEY (c_l1)
         REFERENCES public.c1_code (c_l1) MATCH SIMPLE

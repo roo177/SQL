@@ -2,9 +2,13 @@
 
 DROP FUNCTION IF EXISTS public.q_bb_profit_eur_mt();
 
-
-CREATE OR REPLACE FUNCTION q_bb_profit_eur_mt() returns BOOLEAN AS
-$$
+CREATE OR REPLACE FUNCTION public.q_bb_profit_eur_mt(
+	)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
 BEGIN
 
 -- Table: t_bb_profit_eur_st
@@ -67,8 +71,8 @@ sum(q_bb_profit_eur.profit) as profit,
 c6_code.desc_tr_l6, 
 q_bb_profit_eur.key_r_pc_l6,
 c6_code.unit
-,c5_code.desc_tr_l5
 ,c4_code.desc_tr_l4
+,c5_code.desc_tr_l5
 ,c1_code.desc_tr_l1
 from ((((q_bb_profit_eur
 	left join c3_code on (q_bb_profit_eur.l_3 = c3_code.c_l3) 
@@ -116,8 +120,7 @@ q_bb_profit_eur.key_r_pc_l6
 RETURN TRUE;
 End;
 
-$$
-language plpgsql;
+$BODY$;
 
---ALTER FUNCTION public.q_bb_profit_eur_mt()
- --   OWNER TO ictasadmin;
+ALTER FUNCTION public.q_bb_profit_eur_mt()
+    OWNER TO ictasadmin;
