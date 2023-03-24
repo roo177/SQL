@@ -73,11 +73,11 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.t_cb_mod_indexes
     OWNER to ictasadmin;
 
--- Table: public.t_cb_exp_mod
+-- Table: public.t_ac_mod_exp
 
--- DROP TABLE IF EXISTS public.t_cb_exp_mod CASCADE;
+-- DROP TABLE IF EXISTS public.t_ac_mod_exp CASCADE;
 
-CREATE TABLE IF NOT EXISTS public.t_cb_exp_mod
+CREATE TABLE IF NOT EXISTS public.t_ac_mod_exp
 (
     rep_month character varying(4) COLLATE pg_catalog."default" NOT NULL,
     user_id character varying(6) COLLATE pg_catalog."default" NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS public.t_cb_exp_mod
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.t_cb_exp_mod
+ALTER TABLE IF EXISTS public.t_ac_mod_exp
     OWNER to ictasadmin;
 
 --DROP TABLE IF EXISTS t_cb_mod_inc_st CASCADE;
@@ -1043,7 +1043,7 @@ curr,
 key_r_pc_l6
 
 	FROM 
-		t_cb_exp_mod
+		t_ac_mod_exp
 
 Where exp_ac_exp <>0 AND rep_month = (SELECT MAX(rep_month) from t_rep_month); 
 
