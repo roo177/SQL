@@ -45,7 +45,7 @@ TABLESPACE pg_default;
 
 -- DROP VIEW IF EXISTS q_cb_mod_inc_usd;
 
-CREATE TEMPORARY VIEW q_cb_mod_inc_usd
+CREATE OR REPLACE VIEW q_cb_mod_inc_usd
  AS
  SELECT t_cb_mod_inc_st.user_id,
 	t_cb_mod_inc_st.session_id,

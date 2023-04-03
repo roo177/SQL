@@ -1,8 +1,8 @@
 -- FUNCTION: public.q_cb_mod_exp_eur_mt(text, text)
 
-DROP FUNCTION IF EXISTS public.q_cb_mod_exp_eur_mt;
+DROP FUNCTION IF EXISTS public.q_cb_mod_exp_eur_mt(text, text);
 
-CREATE OR REPLACE FUNCTION public.q_cb_mod_exp_eur_mt  (
+CREATE OR REPLACE FUNCTION public.q_cb_mod_exp_eur_mt(
 	_user_id text,
 	_session_id text)
     RETURNS boolean

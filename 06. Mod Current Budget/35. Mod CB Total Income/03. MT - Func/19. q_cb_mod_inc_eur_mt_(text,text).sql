@@ -75,8 +75,6 @@ CREATE OR REPLACE VIEW q_cb_mod_inc_eur AS
         AND (t_cb_mod_inc_st.session_id = t_cb_mod_mon_curr_rates.session_id) 
         AND (t_cb_mod_inc_st.user_id = t_cb_mod_mon_curr_rates.user_id); 
 
-
-
 -- ALTER TABLE q_cb_inc_eur
 --     OWNER TO ictasadmin;
     

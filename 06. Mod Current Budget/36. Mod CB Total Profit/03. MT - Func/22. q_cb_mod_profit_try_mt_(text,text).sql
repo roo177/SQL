@@ -64,6 +64,7 @@ CREATE OR REPLACE VIEW q_cb_mod_profit_try
     t_cb_mod_profit_st.l_4,
     t_cb_mod_profit_st.l_5,
     t_cb_mod_profit_st.l_6,
+	concat("l_1",'.',"l_2",'.',"l_3",'.',"l_4",'.',"l_5",'.',"l_6") as j_code,
     t_cb_mod_profit_st.month,
     'TRY'::text AS curr,
     s1.income,
@@ -91,21 +92,21 @@ CREATE OR REPLACE VIEW q_cb_mod_profit_try
                 END AS expense) s1(income, expense)
   ORDER BY t_cb_mod_profit_st.user_id,t_cb_mod_profit_st.session_id,t_cb_mod_profit_st.rep_month, t_cb_mod_profit_st.pc, t_cb_mod_profit_st.l_1, t_cb_mod_profit_st.l_2, t_cb_mod_profit_st.l_3, t_cb_mod_profit_st.l_4, t_cb_mod_profit_st.l_5, t_cb_mod_profit_st.l_6;			   
 
-
 ALTER TABLE q_cb_mod_profit_try
     OWNER TO ictasadmin;
 
 Raise notice 'Deleting existing data';
-EXECUTE format('Delete from t_cb_mod_profit_try_st where user_id = %L and session_id = %L;', _user_id, _session_id);
+EXECUTE format('DELETE FROM t_cb_mod_profit_try_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
 Raise notice 'Appending new data';
 
-Insert into t_cb_mod_profit_try_st
+EXECUTE format('Insert into t_cb_mod_profit_try_st
 
 select 
 q_cb_mod_profit_try.user_id,
 q_cb_mod_profit_try.session_id,
 q_cb_mod_profit_try.rep_month, 
-q_cb_mod_profit_try.pc, l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6 as j_code, 
+q_cb_mod_profit_try.pc, 
+q_cb_mod_profit_try.j_code, 
 c2_code.desc_tr_l2, 
 c3_code.desc_tr_l3, 
 sum(q_cb_mod_profit_try.expense) as expense, 
@@ -147,12 +148,13 @@ from ((((q_cb_mod_profit_try
 	and (q_cb_mod_profit_try.l_3 = c5_code.c_l3) 
 	and (q_cb_mod_profit_try.l_2 = c5_code.c_l2) 
 	and (q_cb_mod_profit_try.l_1 = c5_code.c_l1) 
+where q_cb_mod_profit_try.user_id = %L and q_cb_mod_profit_try.session_id = %L
 group by 
 q_cb_mod_profit_try.user_id,
 q_cb_mod_profit_try.session_id,
 q_cb_mod_profit_try.rep_month, 
 q_cb_mod_profit_try.pc, 
-l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6, 
+q_cb_mod_profit_try.j_code, 
 c2_code.desc_tr_l2, 
 c3_code.desc_tr_l3, 
 q_cb_mod_profit_try.month, 
@@ -168,8 +170,9 @@ q_cb_mod_profit_try.key_r_pc_l6
     ,c6_code.unit
 	,c4_code.desc_tr_l4
 	,c5_code.desc_tr_l5
-    ,c1_code.desc_tr_l1;
+    ,c1_code.desc_tr_l1;',_user_id,_session_id);
 
+Raise notice 'Append completed';
 RETURN TRUE;
 End;
 

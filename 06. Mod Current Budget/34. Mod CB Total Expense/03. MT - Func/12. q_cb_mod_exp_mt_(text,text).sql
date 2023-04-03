@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION public.q_cb_mod_exp_mt(
 AS $BODY$
 BEGIN
 
--- DROP TABLE IF EXISTS t_cb_mod_exp_st CASCADE;
+--DROP TABLE IF EXISTS t_cb_mod_exp_st CASCADE;
 
 CREATE TABLE IF NOT EXISTS t_cb_mod_exp_st
 (
@@ -32,7 +32,9 @@ CREATE TABLE IF NOT EXISTS t_cb_mod_exp_st
     l_4 character varying(2) COLLATE pg_catalog."default",
     l_5 character varying(2) COLLATE pg_catalog."default",
     l_6 character varying(3) COLLATE pg_catalog."default",
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default"
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || "pc" || '.' || "l_1" || '.' || "l_2" || '.' || "l_3" || '.' || "l_4" || '.' || "l_5" || '.' || "l_6" ) STORED,
+	jkey character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || "pc" || '.' || "curr" || '.' || "l_1" || '.' || "l_2" || '.' || "l_3" || '.' || "l_4" || '.' || "l_5" || '.' || "l_6"  || '.' ||  extract(DAY FROM "month")::text|| '.' || extract(MONTH FROM "month")::text || '.' || extract(YEAR FROM "month")::text || '.' ||  "user_id" || '.'  || "session_id") STORED
+	
 )
 
 TABLESPACE pg_default;
@@ -57,12 +59,11 @@ q_cb_mod_exp.l_2,
 q_cb_mod_exp.l_3, 
 q_cb_mod_exp.l_4, 
 q_cb_mod_exp.l_5, 
-q_cb_mod_exp.l_6, 
-q_cb_mod_exp.key_r_pc_l6
+q_cb_mod_exp.l_6
 from q_cb_mod_exp 
 left join (c2_code right join c3_code on (c2_code.c_l1 = c3_code.c_l1) and (c2_code.c_l2 = c3_code.c_l2)) on (q_cb_mod_exp.l_1 = c3_code.c_l1) and (q_cb_mod_exp.l_2 = c3_code.c_l2) and (q_cb_mod_exp.l_3 = c3_code.c_l3)
 where q_cb_mod_exp.user_id = _user_id and q_cb_mod_exp.session_id = _session_id 
-group by q_cb_mod_exp.user_id,q_cb_mod_exp.session_id,q_cb_mod_exp.rep_month, q_cb_mod_exp.pc, l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6, c2_code.desc_tr_l2, c3_code.desc_tr_l3, q_cb_mod_exp.month, q_cb_mod_exp.curr, q_cb_mod_exp.l_1, q_cb_mod_exp.l_2, q_cb_mod_exp.l_3, q_cb_mod_exp.l_4, q_cb_mod_exp.l_5, q_cb_mod_exp.l_6, q_cb_mod_exp.key_r_pc_l6;
+group by q_cb_mod_exp.user_id,q_cb_mod_exp.session_id,q_cb_mod_exp.rep_month, q_cb_mod_exp.pc, l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6, c2_code.desc_tr_l2, c3_code.desc_tr_l3, q_cb_mod_exp.month, q_cb_mod_exp.curr, q_cb_mod_exp.l_1, q_cb_mod_exp.l_2, q_cb_mod_exp.l_3, q_cb_mod_exp.l_4, q_cb_mod_exp.l_5, q_cb_mod_exp.l_6;
 
 RETURN TRUE;
 End;

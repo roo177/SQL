@@ -1,10 +1,10 @@
+-- FUNCTION: public.q_cb_mod_insert_data(text, text)
+
 DROP FUNCTION IF EXISTS public.q_cb_mod_insert_data(text, text);
 
 CREATE OR REPLACE FUNCTION public.q_cb_mod_insert_data(
-    _user_id text,
-	_session_id text
-    )
-
+	_user_id text,
+	_session_id text)
     RETURNS void
     LANGUAGE 'plpgsql'
     COST 100
@@ -43,7 +43,6 @@ rep_month, %L, %L, pc, l_1, l_2, l_3, l_4, l_5, l_6, exp_ac_mon, exp_ac_exp,curr
 from t_cb_exp
 where rep_month = (SELECT MAX(rep_month) from t_rep_month);
 ', _user_id, _session_id);
-
 
 END
 $BODY$;
