@@ -37,11 +37,11 @@ CREATE TABLE IF NOT EXISTS t_cb_mod_profit_eur_st
     l_6 character varying(3) COLLATE pg_catalog."default",
     profit double precision,
     desc_tr_l6 character varying(255) COLLATE pg_catalog."default",
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default",
     unit character varying(50) collate pg_catalog."default",
     desc_tr_l4 character varying(255) collate pg_catalog."default",
     desc_tr_l5 character varying(255) collate pg_catalog."default",
-    desc_tr_l1 character varying(255) collate pg_catalog."default"
+    desc_tr_l1 character varying(255) collate pg_catalog."default",
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || "pc" || '.' || "l_1" || '.' || "l_2" || '.' || "l_3" || '.' || "l_4" || '.' || "l_5" || '.' || "l_6" ) STORED
 )
 
 TABLESPACE pg_default;
@@ -58,6 +58,7 @@ CREATE OR REPLACE VIEW q_cb_mod_profit_eur
     t_cb_mod_profit_st.l_4,
     t_cb_mod_profit_st.l_5,
     t_cb_mod_profit_st.l_6,
+    l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6 as j_code, 
     t_cb_mod_profit_st.month,
     'EUR'::text AS curr,
     s1.income,
@@ -86,20 +87,21 @@ CREATE OR REPLACE VIEW q_cb_mod_profit_eur
   ORDER BY t_cb_mod_profit_st.rep_month, t_cb_mod_profit_st.pc, t_cb_mod_profit_st.l_1, t_cb_mod_profit_st.l_2, t_cb_mod_profit_st.l_3, t_cb_mod_profit_st.l_4, t_cb_mod_profit_st.l_5, t_cb_mod_profit_st.l_6;
 
 
-ALTER TABLE q_cb_mod_profit_eur
-    OWNER TO ictasadmin;
+--ALTER TABLE q_cb_mod_profit_eur
+    --OWNER TO ictasadmin;
 
 Raise notice 'Deleting existing data';
 EXECUTE format('Delete from t_cb_mod_profit_eur_st where user_id = %L and session_id = %L;', _user_id, _session_id);
 Raise notice 'Appending new data';
 
-Insert into t_cb_mod_profit_eur_st
+EXECUTE format('Insert into t_cb_mod_profit_eur_st
 
-select 
+Select 
 q_cb_mod_profit_eur.user_id,
 q_cb_mod_profit_eur.session_id,
 q_cb_mod_profit_eur.rep_month, 
-q_cb_mod_profit_eur.pc, l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6 as j_code,
+q_cb_mod_profit_eur.pc, 
+q_cb_mod_profit_eur.j_code, 
 c2_code.desc_tr_l2, 
 c3_code.desc_tr_l3, 
 sum(q_cb_mod_profit_eur.expense) as expense, 
@@ -113,25 +115,24 @@ q_cb_mod_profit_eur.l_4,
 q_cb_mod_profit_eur.l_5, 
 q_cb_mod_profit_eur.l_6, 
 sum(q_cb_mod_profit_eur.profit) as profit, 
-c6_code.desc_tr_l6, 
-q_cb_mod_profit_eur.key_r_pc_l6	
+c6_code.desc_tr_l6
     ,c6_code.unit
 	,c4_code.desc_tr_l4
 	,c5_code.desc_tr_l5
     ,c1_code.desc_tr_l1
 from ((((q_cb_mod_profit_eur
-	left join c3_code on (q_cb_mod_profit_eur.l_3 = c3_code.c_l3) 
+	left join c3_code on (q_cb_mod_profit_eur.l_1 = c3_code.c_l1) 
 	and (q_cb_mod_profit_eur.l_2 = c3_code.c_l2) 
-	and (q_cb_mod_profit_eur.l_1 = c3_code.c_l1))
-	left join c2_code on (q_cb_mod_profit_eur.l_2 = c2_code.c_l2) 
-	and (q_cb_mod_profit_eur.l_1 = c2_code.c_l1))
+	and (q_cb_mod_profit_eur.l_3 = c3_code.c_l3))
+	left join c2_code on (q_cb_mod_profit_eur.l_1 = c2_code.c_l1) 
+	and (q_cb_mod_profit_eur.l_2 = c2_code.c_l2))
     left join c1_code on (q_cb_mod_profit_eur.l_1 = c1_code.c_l1)
-	left join c6_code on (q_cb_mod_profit_eur.l_6 = c6_code.c_l6) 
-	and (q_cb_mod_profit_eur.l_5 = c6_code.c_l5) 
-	and (q_cb_mod_profit_eur.l_4 = c6_code.c_l4) 
-	and (q_cb_mod_profit_eur.l_3 = c6_code.c_l3) 
+	left join c6_code on (q_cb_mod_profit_eur.l_1 = c6_code.c_l1) 
 	and (q_cb_mod_profit_eur.l_2 = c6_code.c_l2) 
-	and (q_cb_mod_profit_eur.l_1 = c6_code.c_l1))
+	and (q_cb_mod_profit_eur.l_3 = c6_code.c_l3) 
+	and (q_cb_mod_profit_eur.l_4 = c6_code.c_l4) 
+	and (q_cb_mod_profit_eur.l_5 = c6_code.c_l5) 
+	and (q_cb_mod_profit_eur.l_6 = c6_code.c_l6))
 	left join c4_code on (q_cb_mod_profit_eur.l_4 = c4_code.c_l4) 
 	and (q_cb_mod_profit_eur.l_3 = c4_code.c_l3) 
 	and (q_cb_mod_profit_eur.l_2 = c4_code.c_l2) 
@@ -141,12 +142,13 @@ from ((((q_cb_mod_profit_eur
 	and (q_cb_mod_profit_eur.l_3 = c5_code.c_l3) 
 	and (q_cb_mod_profit_eur.l_2 = c5_code.c_l2) 
 	and (q_cb_mod_profit_eur.l_1 = c5_code.c_l1) 
+where q_cb_mod_profit_eur.user_id = %L and q_cb_mod_profit_eur.session_id = %L
 group by 
 q_cb_mod_profit_eur.user_id,
 q_cb_mod_profit_eur.session_id,
 q_cb_mod_profit_eur.rep_month, 
 q_cb_mod_profit_eur.pc, 
-l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6, 
+q_cb_mod_profit_eur.j_code, 
 c2_code.desc_tr_l2, 
 c3_code.desc_tr_l3, 
 q_cb_mod_profit_eur.month, 
@@ -157,17 +159,17 @@ q_cb_mod_profit_eur.l_3,
 q_cb_mod_profit_eur.l_4, 
 q_cb_mod_profit_eur.l_5, 
 q_cb_mod_profit_eur.l_6, 
-c6_code.desc_tr_l6, 
-q_cb_mod_profit_eur.key_r_pc_l6	
+c6_code.desc_tr_l6 
     ,c6_code.unit
 	,c4_code.desc_tr_l4
 	,c5_code.desc_tr_l5
-    ,c1_code.desc_tr_l1;
+    ,c1_code.desc_tr_l1;',_user_id,_session_id);
 
+Raise notice 'Append completed';
 RETURN TRUE;
 End;
 
 $BODY$;
 
-ALTER FUNCTION public.q_cb_mod_profit_eur_mt(text, text)
-    OWNER TO ictasadmin;
+--ALTER FUNCTION public.q_cb_mod_profit_eur_mt(text, text)
+    --OWNER TO ictasadmin;

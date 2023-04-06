@@ -37,11 +37,11 @@ CREATE TABLE IF NOT EXISTS  t_cb_mod_profit_usd_st
     l_6 character varying(3) COLLATE pg_catalog."default",
     profit double precision,
     desc_tr_l6 character varying(255) COLLATE pg_catalog."default",
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default",
     unit character varying(50) collate pg_catalog."default",
     desc_tr_l4 character varying(255) collate pg_catalog."default",
     desc_tr_l5 character varying(255) collate pg_catalog."default",
-    desc_tr_l1 character varying(255) collate pg_catalog."default"
+    desc_tr_l1 character varying(255) collate pg_catalog."default",
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || "pc" || '.' || "l_1" || '.' || "l_2" || '.' || "l_3" || '.' || "l_4" || '.' || "l_5" || '.' || "l_6" ) STORED
 )
 
 TABLESPACE pg_default;
@@ -62,7 +62,7 @@ CREATE OR REPLACE VIEW q_cb_mod_profit_usd
     t_cb_mod_profit_st.l_4,
     t_cb_mod_profit_st.l_5,
     t_cb_mod_profit_st.l_6,
-	concat("l_1",'.',"l_2",'.',"l_3",'.',"l_4",'.',"l_5",'.',"l_6") as j_code,
+	l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6 as j_code, 
     t_cb_mod_profit_st.month,
     'USD'::text AS curr,
     s1.income,
@@ -90,8 +90,8 @@ CREATE OR REPLACE VIEW q_cb_mod_profit_usd
                 END AS expense) s1(income, expense)
   ORDER BY t_cb_mod_profit_st.user_id,t_cb_mod_profit_st.session_id,t_cb_mod_profit_st.rep_month, t_cb_mod_profit_st.pc, t_cb_mod_profit_st.l_1, t_cb_mod_profit_st.l_2, t_cb_mod_profit_st.l_3, t_cb_mod_profit_st.l_4, t_cb_mod_profit_st.l_5, t_cb_mod_profit_st.l_6;			   
 
-ALTER TABLE q_cb_mod_profit_usd
-    OWNER TO ictasadmin;
+--ALTER TABLE q_cb_mod_profit_usd
+    --OWNER TO ictasadmin;
 
 Raise notice 'Deleting existing data';
 EXECUTE format('DELETE FROM t_cb_mod_profit_usd_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
@@ -119,8 +119,7 @@ q_cb_mod_profit_usd.l_5,
 q_cb_mod_profit_usd.l_6, 
 sum(q_cb_mod_profit_usd.profit) as profit, 
 c6_code.desc_tr_l6, 
-q_cb_mod_profit_usd.key_r_pc_l6
-,c6_code.unit
+c6_code.unit
 	,c4_code.desc_tr_l4
 	,c5_code.desc_tr_l5
     ,c1_code.desc_tr_l1
@@ -164,8 +163,7 @@ q_cb_mod_profit_usd.l_4,
 q_cb_mod_profit_usd.l_5, 
 q_cb_mod_profit_usd.l_6, 
 c6_code.desc_tr_l6, 
-q_cb_mod_profit_usd.key_r_pc_l6
-,c6_code.unit
+c6_code.unit
 	,c4_code.desc_tr_l4
 	,c5_code.desc_tr_l5
     ,c1_code.desc_tr_l1;',_user_id,_session_id);
@@ -175,5 +173,5 @@ End;
 
 $BODY$;
 
-ALTER FUNCTION public.q_cb_mod_profit_usd_mt(text, text)
-    OWNER TO ictasadmin;
+--ALTER FUNCTION public.q_cb_mod_profit_usd_mt(text, text)
+    --OWNER TO ictasadmin;

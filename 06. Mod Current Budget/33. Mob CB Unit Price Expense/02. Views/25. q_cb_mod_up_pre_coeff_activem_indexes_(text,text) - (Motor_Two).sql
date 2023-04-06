@@ -37,9 +37,10 @@ CREATE OR REPLACE VIEW public.q_cb_mod_up_pre_coeff_activem_indexes
     q_cb_mod_analysis_activem_with_prices.key_r4_simple,
     q_cb_mod_analysis_activem_with_prices.key_r4,
     q_cb_mod_analysis_activem_with_prices.key_r_pc_l6,
-    q_cb_mod_analysis_activem_with_prices.key_full
+    q_cb_mod_analysis_activem_with_prices.key_full,
+    q_cb_mod_analysis_activem_with_prices.pc_rep_month
    FROM q_cb_mod_analysis_activem_with_prices
-     LEFT JOIN q_cb_mod_indexes_and_curr ON q_cb_mod_analysis_activem_with_prices.pc::text = q_cb_mod_indexes_and_curr.pc::text AND q_cb_mod_analysis_activem_with_prices.exp_cb_mon = q_cb_mod_indexes_and_curr.exp_cb_mon AND q_cb_mod_analysis_activem_with_prices.rep_month::text = q_cb_mod_indexes_and_curr.rep_month::text;
+     LEFT JOIN q_cb_mod_indexes_and_curr ON q_cb_mod_analysis_activem_with_prices.pc_rep_month = q_cb_mod_indexes_and_curr.pc_rep_month;
 
 ALTER TABLE public.q_cb_mod_up_pre_coeff_activem_indexes
     OWNER TO ictasadmin;

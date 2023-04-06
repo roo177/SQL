@@ -12,19 +12,6 @@ CREATE OR REPLACE FUNCTION public.q_cb_mod_calculate_budget(
 AS $BODY$
 BEGIN
 
-EXECUTE format('DELETE FROM t_cb_mod_exp_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_exp_eur_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_exp_try_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_exp_usd_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_inc_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_inc_eur_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_inc_try_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_inc_usd_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_profit_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_profit_eur_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_profit_try_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-EXECUTE format('DELETE FROM t_cb_mod_profit_usd_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
-
 PERFORM q_cb_mod_exp_mt(_user_id, _session_id);
 PERFORM q_cb_mod_exp_eur_mt(_user_id, _session_id);
 PERFORM q_cb_mod_exp_try_mt(_user_id, _session_id);

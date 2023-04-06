@@ -17,10 +17,9 @@ THEN RAISE NOTICE 'Testing';
 ELSE RAISE NOTICE 'Not-Testing';
 end if;
 
--- DROP TABLE IF EXISTS t_cb_mod_mon_curr_rates CASCADE;
 -- Table: public.t_cb_mod_mon_curr_rates
 
--- DROP TABLE IF EXISTS public.t_cb_mod_mon_curr_rates CASCADE;
+-- DROP TABLE IF EXISTS public.t_cb_mod_mon_curr_rates;
 
 CREATE TABLE IF NOT EXISTS public.t_cb_mod_mon_curr_rates
 (
@@ -37,16 +36,17 @@ CREATE TABLE IF NOT EXISTS public.t_cb_mod_mon_curr_rates
     r_try_eur numeric(12,6) GENERATED ALWAYS AS (((1)::numeric / r_eur_try)) STORED,
     r_usd_eur numeric(12,6) GENERATED ALWAYS AS ((r_usd_try / r_eur_try)) STORED,
     r_try_usd numeric(12,6) GENERATED ALWAYS AS (((1)::numeric / r_usd_try)) STORED,
-	jkey_curr_index character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || extract(DAY FROM "month")|| '.' || extract(MONTH FROM "month") || '.' || extract(YEAR FROM "month") || '.' ||  "user_id" || '.'  || "session_id") STORED,
-	rm_month character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || extract(DAY FROM "month")|| '.' || extract(MONTH FROM "month") || '.' || extract(YEAR FROM "month") ) STORED,
-	CONSTRAINT t_cb_mod_mon_curr_rates_pkey PRIMARY KEY (user_id, session_id, rep_month, month)
+    rep_month_userid_sessionid character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((rep_month)::text || '.'::text) || (user_id)::text) || '.'::text) || (session_id)::text)) STORED,
+    rm_month character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((rep_month)::text || '.'::text) || (EXTRACT(day FROM month))::text) || '.'::text) || (EXTRACT(month FROM month))::text) || '.'::text) || (EXTRACT(year FROM month))::text)) STORED,
+    jkey_curr_index character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((((((rep_month)::text || '.'::text) || (EXTRACT(day FROM month))::text) || '.'::text) || (EXTRACT(month FROM month))::text) || '.'::text) || (EXTRACT(year FROM month))::text) || '.'::text) || (user_id)::text) || '.'::text) || (session_id)::text)) STORED,
+    CONSTRAINT t_cb_mod_mon_curr_rates_pkey PRIMARY KEY (user_id, session_id, rep_month, month)
 )
+
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.t_cb_mod_mon_curr_rates
     OWNER to ictasadmin;
 
--- DROP TABLE IF EXISTS t_cb_mod_indexes CASCADE;
 -- Table: public.t_cb_mod_indexes
 
 -- DROP TABLE IF EXISTS public.t_cb_mod_indexes;
@@ -65,8 +65,9 @@ CREATE TABLE IF NOT EXISTS public.t_cb_mod_indexes
     bb_petrol numeric(18,10),
     bb_cement numeric(18,10),
     bb_electricity numeric(18,10),
-	jkey_curr_index character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || extract(DAY FROM "month")::text|| '.' || extract(MONTH FROM "month")::text || '.' || extract(YEAR FROM "month")::text || '.' ||  "user_id" || '.'  || "session_id") STORED,
-	rm_month character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || extract(DAY FROM "month")::text || '.' || extract(MONTH FROM "month")::text || '.' || extract(YEAR FROM "month")::text ) STORED,
+    rm_month character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((rep_month)::text || '.'::text) || (EXTRACT(day FROM month))::text) || '.'::text) || (EXTRACT(month FROM month))::text) || '.'::text) || (EXTRACT(year FROM month))::text)) STORED,
+    jkey_curr_index character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((((((rep_month)::text || '.'::text) || (EXTRACT(day FROM month))::text) || '.'::text) || (EXTRACT(month FROM month))::text) || '.'::text) || (EXTRACT(year FROM month))::text) || '.'::text) || (user_id)::text) || '.'::text) || (session_id)::text)) STORED,
+    rep_month_userid_sessionid character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((rep_month)::text || '.'::text) || (user_id)::text) || '.'::text) || (session_id)::text)) STORED,
     CONSTRAINT t_cb_mod_indexes_pkey PRIMARY KEY (user_id, session_id, rep_month, month)
 )
 
@@ -77,7 +78,7 @@ ALTER TABLE IF EXISTS public.t_cb_mod_indexes
 
 -- Table: public.t_ac_mod_exp
 
--- DROP TABLE IF EXISTS public.t_ac_mod_exp CASCADE;
+-- DROP TABLE IF EXISTS public.t_ac_mod_exp;
 
 CREATE TABLE IF NOT EXISTS public.t_ac_mod_exp
 (
@@ -94,10 +95,9 @@ CREATE TABLE IF NOT EXISTS public.t_ac_mod_exp
     exp_ac_mon date NOT NULL,
     exp_ac_exp numeric(25,15) NOT NULL,
     curr character varying(3) COLLATE pg_catalog."default" NOT NULL,
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((((((((((rep_month) || '.') || (pc)) || '.') || (l_1)) || '.') || (l_2)) || '.') || (l_3)) || '.') || (l_4)) || '.') || (l_5)) || '.') || (l_6))) STORED,
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((((((((((rep_month)::text || '.'::text) || (pc)::text) || '.'::text) || (l_1)::text) || '.'::text) || (l_2)::text) || '.'::text) || (l_3)::text) || '.'::text) || (l_4)::text) || '.'::text) || (l_5)::text) || '.'::text) || (l_6)::text)) STORED,
     ccode character varying(18) COLLATE pg_catalog."default" NOT NULL,
-    pkey character varying(60) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((((((((((((((((((rep_month) || '-') || (pc)) || '-') || (l_1)) || '.') || (l_2)) || '.') || (l_3)) || '.') || (l_4)) || '.') || (l_5)) || '.') || (l_6)) || '-') || (EXTRACT(year FROM exp_ac_mon)::text)) || '-') || (EXTRACT(month FROM exp_ac_mon)::text)) || '-') || (EXTRACT(day FROM exp_ac_mon)::text)) || '-') || (curr))) STORED,
-	jkey character varying(150) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || "pc" || '.' || "curr" || '.' || "l_1" || '.' || "l_2" || '.' || "l_3" || '.' || "l_4" || '.' || "l_5" || '.' || "l_6"  || '.' ||  extract(DAY FROM "exp_ac_mon")::text|| '.' || extract(MONTH FROM "exp_ac_mon")::text || '.' || extract(YEAR FROM "exp_ac_mon")::text || '.' ||  "user_id" || '.'  || "session_id") STORED,
+    pkey character varying(60) COLLATE pg_catalog."default" GENERATED ALWAYS AS ((((((((((((((((((((((((rep_month)::text || '-'::text) || (pc)::text) || '-'::text) || (l_1)::text) || '.'::text) || (l_2)::text) || '.'::text) || (l_3)::text) || '.'::text) || (l_4)::text) || '.'::text) || (l_5)::text) || '.'::text) || (l_6)::text) || '-'::text) || (EXTRACT(year FROM exp_ac_mon))::text) || '-'::text) || (EXTRACT(month FROM exp_ac_mon))::text) || '-'::text) || (EXTRACT(day FROM exp_ac_mon))::text) || '-'::text) || (curr)::text)) STORED,
     CONSTRAINT t_cb_exp_mod_pkey PRIMARY KEY (rep_month, user_id, session_id, pc, l_1, l_2, l_3, l_4, l_5, l_6, exp_ac_mon, exp_ac_exp, curr, ccode)
 )
 
@@ -157,35 +157,38 @@ from t_cb_qty left join t_rep_month on t_cb_qty.rep_month = t_rep_month.rep_mont
 where (((t_cb_qty.exp_cb_mon)>t_rep_month.rep_month_date) and ((t_cb_qty.exp_cb_qty)<>0) and ((t_cb_qty.rep_month)=(SELECT Max(rep_month) from t_rep_month)))
 order by t_cb_qty.key_r_pc_l6, t_cb_qty.exp_cb_mon;
 
---DROP VIEW IF EXISTS q_cb_mod_active_months_res_qty;
+-- View: public.q_cb_mod_active_months_res_qty
 
-CREATE OR REPLACE VIEW q_cb_mod_active_months_res_qty AS
+-- DROP VIEW public.q_cb_mod_active_months_res_qty;
 
-select 
-  t_cb_analysis.rep_month, 
-  t_cb_analysis.pc, 
-  q_cb_mod_qty_activem_works.exp_cb_mon, 
-  t_cb_analysis.key_r4, 
-  q_cb_mod_qty_activem_works.key_r_pc_l6, 
-  t_cb_analysis.key_full, 
-  t_cb_analysis.l_1, 
-  t_cb_analysis.l_2, 
-  t_cb_analysis.l_3, 
-  t_cb_analysis.l_4, 
-  t_cb_analysis.l_5, 
-  t_cb_analysis.l_6, 
-  t_cb_analysis.rs_l1, 
-  t_cb_analysis.rs_l2, 
-  t_cb_analysis.rs_l3, 
-  t_cb_analysis.rs_l4, 
-  t_cb_analysis.key_r4_simple, 
-  (1 + r_loss)*(
-    t_cb_analysis.an_rs_quantity
-  ) as an_rs_quantity, 
-  t_cb_analysis.r_loss 
-from 
-  q_cb_mod_qty_activem_works 
-  left join t_cb_analysis on q_cb_mod_qty_activem_works.key_r_pc_l6 = t_cb_analysis.key_r_pc_l6;
+CREATE OR REPLACE VIEW public.q_cb_mod_active_months_res_qty
+ AS
+ SELECT t_cb_analysis.rep_month,
+    t_cb_analysis.pc,
+    q_cb_mod_qty_activem_works.exp_cb_mon,
+    t_cb_analysis.key_r4,
+    q_cb_mod_qty_activem_works.key_r_pc_l6,
+    t_cb_analysis.key_full,
+    t_cb_analysis.l_1,
+    t_cb_analysis.l_2,
+    t_cb_analysis.l_3,
+    t_cb_analysis.l_4,
+    t_cb_analysis.l_5,
+    t_cb_analysis.l_6,
+    t_cb_analysis.rs_l1,
+    t_cb_analysis.rs_l2,
+    t_cb_analysis.rs_l3,
+    t_cb_analysis.rs_l4,
+    t_cb_analysis.key_r4_simple,
+    (1::numeric + t_cb_analysis.r_loss) * t_cb_analysis.an_rs_quantity AS an_rs_quantity,
+    t_cb_analysis.r_loss,
+    (t_cb_analysis.rep_month::text || '.'::text) || ((((EXTRACT(day FROM q_cb_mod_qty_activem_works.exp_cb_mon)::text || '.'::text) || EXTRACT(month FROM q_cb_mod_qty_activem_works.exp_cb_mon)::text) || '.'::text) || EXTRACT(year FROM q_cb_mod_qty_activem_works.exp_cb_mon)::text) AS rm_month
+   FROM q_cb_mod_qty_activem_works
+     LEFT JOIN t_cb_analysis ON q_cb_mod_qty_activem_works.key_r_pc_l6::text = t_cb_analysis.key_r_pc_l6::text
+  WHERE t_cb_analysis.rep_month IS NOT NULL;
+
+ALTER TABLE public.q_cb_mod_active_months_res_qty
+    OWNER TO ictasadmin;
 
 --DROP VIEW IF EXISTS q_cb_mod_curr_base_month;
 
@@ -199,180 +202,191 @@ right join q_budget_project_months ON t_rep_month.rep_month = q_budget_project_m
 Where q_budget_project_months.rep_month = (SELECT MAX(rep_month) from t_rep_month)
 GROUP BY q_budget_project_months.pc, t_rep_month.rep_month_date, q_budget_project_months.rep_month;
 
---DROP VIEW IF EXISTS q_cb_mod_curr_base_val;
+-- View: public.q_cb_mod_curr_base_val
 
-CREATE OR REPLACE VIEW q_cb_mod_curr_base_val AS
-select 
-t_cb_mod_mon_curr_rates.user_id,
-t_cb_mod_mon_curr_rates.session_id,
-q_cb_mod_curr_base_month.rep_month_date, 
-t_cb_mod_mon_curr_rates.r_eur_eur, 
-t_cb_mod_mon_curr_rates.r_eur_try, 
-t_cb_mod_mon_curr_rates.r_eur_usd, 
-t_cb_mod_mon_curr_rates.r_try_eur, 
-t_cb_mod_mon_curr_rates.r_try_try, 
-t_cb_mod_mon_curr_rates.r_try_usd, 
-t_cb_mod_mon_curr_rates.r_usd_eur, 
-t_cb_mod_mon_curr_rates.r_usd_try, 
-t_cb_mod_mon_curr_rates.r_usd_usd, 
-q_cb_mod_curr_base_month.rep_month
-from q_cb_mod_curr_base_month left join t_cb_mod_mon_curr_rates on q_cb_mod_curr_base_month.rep_month_date = t_cb_mod_mon_curr_rates.month AND  q_cb_mod_curr_base_month.rep_month = t_cb_mod_mon_curr_rates.rep_month
-group by q_cb_mod_curr_base_month.rep_month_date, t_cb_mod_mon_curr_rates.user_id, t_cb_mod_mon_curr_rates.session_id, t_cb_mod_mon_curr_rates.r_eur_eur, t_cb_mod_mon_curr_rates.r_eur_try, t_cb_mod_mon_curr_rates.r_eur_usd, t_cb_mod_mon_curr_rates.r_try_eur, t_cb_mod_mon_curr_rates.r_try_try, t_cb_mod_mon_curr_rates.r_try_usd, t_cb_mod_mon_curr_rates.r_usd_eur, t_cb_mod_mon_curr_rates.r_usd_try, t_cb_mod_mon_curr_rates.r_usd_usd, q_cb_mod_curr_base_month.rep_month;
+-- DROP VIEW public.q_cb_mod_curr_base_val;
 
---DROP VIEW IF EXISTS q_cb_mod_monthly_curr_rates_activem;
+CREATE OR REPLACE VIEW public.q_cb_mod_curr_base_val
+ AS
+ SELECT t_cb_mod_mon_curr_rates.user_id,
+    t_cb_mod_mon_curr_rates.session_id,
+    q_cb_mod_curr_base_month.rep_month_date,
+    t_cb_mod_mon_curr_rates.r_eur_eur,
+    t_cb_mod_mon_curr_rates.r_eur_try,
+    t_cb_mod_mon_curr_rates.r_eur_usd,
+    t_cb_mod_mon_curr_rates.r_try_eur,
+    t_cb_mod_mon_curr_rates.r_try_try,
+    t_cb_mod_mon_curr_rates.r_try_usd,
+    t_cb_mod_mon_curr_rates.r_usd_eur,
+    t_cb_mod_mon_curr_rates.r_usd_try,
+    t_cb_mod_mon_curr_rates.r_usd_usd,
+    q_cb_mod_curr_base_month.rep_month,
+    t_cb_mod_mon_curr_rates.rm_month,
+    t_cb_mod_mon_curr_rates.jkey_curr_index,
+    (((q_cb_mod_curr_base_month.rep_month::text || '.'::text) || t_cb_mod_mon_curr_rates.user_id::text) || '.'::text) || t_cb_mod_mon_curr_rates.session_id::text AS rep_month_userid_sessionid
+   FROM q_cb_mod_curr_base_month
+     LEFT JOIN t_cb_mod_mon_curr_rates ON q_cb_mod_curr_base_month.rep_month_date = t_cb_mod_mon_curr_rates.month AND q_cb_mod_curr_base_month.rep_month::text = t_cb_mod_mon_curr_rates.rep_month::text
+  GROUP BY ((((q_cb_mod_curr_base_month.rep_month::text || '.'::text) || t_cb_mod_mon_curr_rates.user_id::text) || '.'::text) || t_cb_mod_mon_curr_rates.session_id::text), t_cb_mod_mon_curr_rates.jkey_curr_index, t_cb_mod_mon_curr_rates.rm_month, q_cb_mod_curr_base_month.rep_month_date, t_cb_mod_mon_curr_rates.user_id, t_cb_mod_mon_curr_rates.session_id, t_cb_mod_mon_curr_rates.r_eur_eur, t_cb_mod_mon_curr_rates.r_eur_try, t_cb_mod_mon_curr_rates.r_eur_usd, t_cb_mod_mon_curr_rates.r_try_eur, t_cb_mod_mon_curr_rates.r_try_try, t_cb_mod_mon_curr_rates.r_try_usd, t_cb_mod_mon_curr_rates.r_usd_eur, t_cb_mod_mon_curr_rates.r_usd_try, t_cb_mod_mon_curr_rates.r_usd_usd, q_cb_mod_curr_base_month.rep_month;
 
-CREATE OR REPLACE VIEW q_cb_mod_monthly_curr_rates_activem AS
+ALTER TABLE public.q_cb_mod_curr_base_val
+    OWNER TO ictasadmin;
 
-SELECT q_cb_mod_active_months_res_qty.rep_month
-	,t_cb_mod_mon_curr_rates.user_id
-	,t_cb_mod_mon_curr_rates.session_id
-	,q_cb_mod_active_months_res_qty.pc
-	,q_cb_mod_active_months_res_qty.l_1
-	,q_cb_mod_active_months_res_qty.l_2
-	,q_cb_mod_active_months_res_qty.l_3
-	,q_cb_mod_active_months_res_qty.l_4
-	,q_cb_mod_active_months_res_qty.l_5
-	,q_cb_mod_active_months_res_qty.l_6
-	,q_cb_mod_active_months_res_qty.rs_l1
-	,q_cb_mod_active_months_res_qty.rs_l2
-	,q_cb_mod_active_months_res_qty.rs_l3
-	,q_cb_mod_active_months_res_qty.rs_l4
-	,q_cb_mod_active_months_res_qty.exp_cb_mon
-	,t_cb_mod_mon_curr_rates.r_eur_try
-	,t_cb_mod_mon_curr_rates.r_eur_usd
-	,t_cb_mod_mon_curr_rates.r_usd_eur
-	,t_cb_mod_mon_curr_rates.r_usd_try
-	,r4_code.Currency as curr
-FROM (q_cb_mod_active_months_res_qty
-	LEFT JOIN t_cb_mod_mon_curr_rates ON (q_cb_mod_active_months_res_qty.exp_cb_mon = t_cb_mod_mon_curr_rates.month) 
-	AND (q_cb_mod_active_months_res_qty.rep_month = t_cb_mod_mon_curr_rates.rep_month))
-	LEFT JOIN r4_code ON q_cb_mod_active_months_res_qty.key_r4_simple = r4_code.Key_R4_Simple 
-GROUP BY q_cb_mod_active_months_res_qty.rep_month
-	,t_cb_mod_mon_curr_rates.user_id
-	,t_cb_mod_mon_curr_rates.session_id
-	,q_cb_mod_active_months_res_qty.pc
-	,q_cb_mod_active_months_res_qty.l_1
-	,q_cb_mod_active_months_res_qty.l_2
-	,q_cb_mod_active_months_res_qty.l_3
-	,q_cb_mod_active_months_res_qty.l_4
-	,q_cb_mod_active_months_res_qty.l_5
-	,q_cb_mod_active_months_res_qty.l_6
-	,q_cb_mod_active_months_res_qty.rs_l1
-	,q_cb_mod_active_months_res_qty.rs_l2
-	,q_cb_mod_active_months_res_qty.rs_l3
-	,q_cb_mod_active_months_res_qty.rs_l4
-	,q_cb_mod_active_months_res_qty.exp_cb_mon
-	,t_cb_mod_mon_curr_rates.r_eur_try
-	,t_cb_mod_mon_curr_rates.r_eur_usd
-	,t_cb_mod_mon_curr_rates.r_usd_eur
-	,t_cb_mod_mon_curr_rates.r_usd_try
-	,r4_code.Currency;
 
---DROP VIEW IF EXISTS q_cb_mod_monthly_curr_rates_inc;
+-- View: public.q_cb_mod_monthly_curr_rates_activem
 
-CREATE OR REPLACE VIEW q_cb_mod_monthly_curr_rates_inc AS
+-- DROP VIEW public.q_cb_mod_monthly_curr_rates_activem;
 
-SELECT q_cb_mod_monthly_curr_rates_activem.rep_month
-	,q_cb_mod_monthly_curr_rates_activem.user_id
-	,q_cb_mod_monthly_curr_rates_activem.session_id
-	,q_cb_mod_monthly_curr_rates_activem.pc
-	,q_cb_mod_monthly_curr_rates_activem.exp_cb_mon
-	,q_cb_mod_monthly_curr_rates_activem.r_eur_try/q_cb_mod_curr_base_val.r_eur_try-1 AS rt_eur_try
-	,q_cb_mod_monthly_curr_rates_activem.r_eur_usd/q_cb_mod_curr_base_val.r_eur_usd-1 AS rt_eur_usd
-	,q_cb_mod_monthly_curr_rates_activem.r_usd_try/q_cb_mod_curr_base_val.r_usd_try-1 AS rt_usd_try
-	,q_cb_mod_monthly_curr_rates_activem.r_usd_eur/q_cb_mod_curr_base_val.r_usd_eur-1 AS rt_usd_eur 
-FROM q_cb_mod_monthly_curr_rates_activem
-	LEFT JOIN q_cb_mod_curr_base_val ON (q_cb_mod_monthly_curr_rates_activem.rep_month = q_cb_mod_curr_base_val.rep_month) 
-	AND (q_cb_mod_monthly_curr_rates_activem.user_id = q_cb_mod_curr_base_val.user_id) 
-	AND (q_cb_mod_monthly_curr_rates_activem.session_id = q_cb_mod_curr_base_val.session_id) 
-GROUP BY q_cb_mod_monthly_curr_rates_activem.rep_month
-	,q_cb_mod_monthly_curr_rates_activem.user_id
-	,q_cb_mod_monthly_curr_rates_activem.session_id
-	,q_cb_mod_monthly_curr_rates_activem.pc
-	,q_cb_mod_monthly_curr_rates_activem.exp_cb_mon
-	,q_cb_mod_monthly_curr_rates_activem.r_eur_try/q_cb_mod_curr_base_val.r_eur_try-1
-	,q_cb_mod_monthly_curr_rates_activem.r_eur_usd/q_cb_mod_curr_base_val.r_eur_usd-1
-	,q_cb_mod_monthly_curr_rates_activem.r_usd_try/q_cb_mod_curr_base_val.r_usd_try-1
-	,q_cb_mod_monthly_curr_rates_activem.r_usd_eur/q_cb_mod_curr_base_val.r_usd_eur-1;
+CREATE OR REPLACE VIEW public.q_cb_mod_monthly_curr_rates_activem
+ AS
+ SELECT q_cb_mod_active_months_res_qty.rep_month,
+    t_cb_mod_mon_curr_rates.user_id,
+    t_cb_mod_mon_curr_rates.session_id,
+    q_cb_mod_active_months_res_qty.pc,
+    q_cb_mod_active_months_res_qty.l_1,
+    q_cb_mod_active_months_res_qty.l_2,
+    q_cb_mod_active_months_res_qty.l_3,
+    q_cb_mod_active_months_res_qty.l_4,
+    q_cb_mod_active_months_res_qty.l_5,
+    q_cb_mod_active_months_res_qty.l_6,
+    q_cb_mod_active_months_res_qty.rs_l1,
+    q_cb_mod_active_months_res_qty.rs_l2,
+    q_cb_mod_active_months_res_qty.rs_l3,
+    q_cb_mod_active_months_res_qty.rs_l4,
+    q_cb_mod_active_months_res_qty.exp_cb_mon,
+    t_cb_mod_mon_curr_rates.r_eur_try,
+    t_cb_mod_mon_curr_rates.r_eur_usd,
+    t_cb_mod_mon_curr_rates.r_usd_eur,
+    t_cb_mod_mon_curr_rates.r_usd_try,
+    r4_code.currency AS curr,
+    t_cb_mod_mon_curr_rates.rm_month,
+    t_cb_mod_mon_curr_rates.jkey_curr_index,
+    t_cb_mod_mon_curr_rates.rep_month_userid_sessionid
+   FROM q_cb_mod_active_months_res_qty
+     LEFT JOIN t_cb_mod_mon_curr_rates ON q_cb_mod_active_months_res_qty.rm_month = t_cb_mod_mon_curr_rates.rm_month::text
+     LEFT JOIN r4_code ON q_cb_mod_active_months_res_qty.key_r4_simple::text = r4_code.key_r4_simple::text
+  GROUP BY t_cb_mod_mon_curr_rates.rep_month_userid_sessionid, t_cb_mod_mon_curr_rates.jkey_curr_index, t_cb_mod_mon_curr_rates.rm_month, q_cb_mod_active_months_res_qty.rep_month, t_cb_mod_mon_curr_rates.user_id, t_cb_mod_mon_curr_rates.session_id, q_cb_mod_active_months_res_qty.pc, q_cb_mod_active_months_res_qty.l_1, q_cb_mod_active_months_res_qty.l_2, q_cb_mod_active_months_res_qty.l_3, q_cb_mod_active_months_res_qty.l_4, q_cb_mod_active_months_res_qty.l_5, q_cb_mod_active_months_res_qty.l_6, q_cb_mod_active_months_res_qty.rs_l1, q_cb_mod_active_months_res_qty.rs_l2, q_cb_mod_active_months_res_qty.rs_l3, q_cb_mod_active_months_res_qty.rs_l4, q_cb_mod_active_months_res_qty.exp_cb_mon, t_cb_mod_mon_curr_rates.r_eur_try, t_cb_mod_mon_curr_rates.r_eur_usd, t_cb_mod_mon_curr_rates.r_usd_eur, t_cb_mod_mon_curr_rates.r_usd_try, r4_code.currency;
 
---DROP VIEW IF EXISTS q_cb_mod_curr_escalation_rates;
-CREATE OR REPLACE VIEW q_cb_mod_curr_escalation_rates AS 
-select 
-  q_cb_mod_active_months_res_qty.rep_month, 
-  q_cb_mod_monthly_curr_rates_inc.user_id,
-  q_cb_mod_monthly_curr_rates_inc.session_id,
-  q_cb_mod_active_months_res_qty.pc, 
-  q_cb_mod_active_months_res_qty.l_1, 
-  q_cb_mod_active_months_res_qty.l_2, 
-  q_cb_mod_active_months_res_qty.l_3, 
-  q_cb_mod_active_months_res_qty.l_4, 
-  q_cb_mod_active_months_res_qty.l_5, 
-  q_cb_mod_active_months_res_qty.l_6, 
-  q_cb_mod_active_months_res_qty.exp_cb_mon as month, 
-  q_cb_mod_active_months_res_qty.rs_l1, 
-  q_cb_mod_active_months_res_qty.rs_l2, 
-  q_cb_mod_active_months_res_qty.rs_l3, 
-  q_cb_mod_active_months_res_qty.rs_l4, 
-  CASE WHEN r4_code.currency = 'TRY' 
-  and w_inf_usd <> 0 THEN 1 + rt_usd_try * w_inf_usd ELSE CASE WHEN r4_code.currency = 'EUR' 
-  and w_inf_usd <> 0 THEN 1 + rt_usd_eur * w_inf_usd ELSE 1 end end as k_usd, 
-  CASE WHEN r4_code.currency = 'TRY' 
-  and w_inf_eur <> 0 THEN 1 + rt_eur_try * w_inf_eur ELSE CASE WHEN r4_code.currency = 'USD' 
-  and w_inf_eur <> 0 THEN 1 + rt_eur_usd * w_inf_eur ELSE 1 end END as k_eur, 
-  r4_code.w_inf_usd, 
-  r4_code.w_inf_eur, 
-  r4_code.currency as curr, 
-  q_cb_mod_active_months_res_qty.key_r4_simple, 
-  q_cb_mod_active_months_res_qty.key_full, 
-  q_cb_mod_active_months_res_qty.key_r_pc_l6, 
-  q_cb_mod_active_months_res_qty.key_r4, 
-  key_full || '.' || currency || '.' || q_cb_mod_active_months_res_qty.exp_cb_mon as key_full_comb 
-from 
-  (
-    q_cb_mod_active_months_res_qty 
-    left join q_cb_mod_monthly_curr_rates_inc on (
-      q_cb_mod_active_months_res_qty.exp_cb_mon = q_cb_mod_monthly_curr_rates_inc.exp_cb_mon
-    ) 
-    and (
-      q_cb_mod_active_months_res_qty.pc = q_cb_mod_monthly_curr_rates_inc.pc
-    ) 
-    and (
-      q_cb_mod_active_months_res_qty.rep_month = q_cb_mod_monthly_curr_rates_inc.rep_month
-    )
-  ) 
-  left join r4_code on q_cb_mod_active_months_res_qty.key_r4_simple = r4_code.key_r4_simple;
+ALTER TABLE public.q_cb_mod_monthly_curr_rates_activem
+    OWNER TO ictasadmin;
 
---DROP VIEW IF EXISTS q_cb_mod_analysis_activem_with_prices;
 
-CREATE OR REPLACE VIEW q_cb_mod_analysis_activem_with_prices AS
-SELECT q_cb_mod_active_months_res_qty.rep_month,
-       q_cb_mod_active_months_res_qty.pc,
-       q_cb_mod_active_months_res_qty.exp_cb_mon,
-       q_cb_mod_active_months_res_qty.an_rs_quantity,
-       q_cb_mod_active_months_res_qty.key_r4,
-       q_cb_mod_active_months_res_qty.key_r_pc_l6,
-       q_cb_mod_active_months_res_qty.key_full,
-       t_cb_res_up.up_cost,
-       q_cb_mod_active_months_res_qty.l_1,
-       q_cb_mod_active_months_res_qty.l_2,
-       q_cb_mod_active_months_res_qty.l_3,
-       q_cb_mod_active_months_res_qty.l_4,
-       q_cb_mod_active_months_res_qty.l_5,
-       q_cb_mod_active_months_res_qty.l_6,
-       q_cb_mod_active_months_res_qty.rs_l1,
-       q_cb_mod_active_months_res_qty.rs_l2,
-       q_cb_mod_active_months_res_qty.rs_l3,
-       q_cb_mod_active_months_res_qty.rs_l4,
-       r4_code.currency,
-       q_cb_mod_active_months_res_qty.key_r4_simple
-FROM   (q_cb_mod_active_months_res_qty
-        LEFT JOIN t_cb_res_up
-               ON q_cb_mod_active_months_res_qty.key_r4 = t_cb_res_up.key_r4)
-       LEFT JOIN r4_code
-              ON q_cb_mod_active_months_res_qty.key_r4_simple =
-                 r4_code.key_r4_simple; 
+-- View: public.q_cb_mod_monthly_curr_rates_inc
+
+-- DROP VIEW public.q_cb_mod_monthly_curr_rates_inc;
+
+CREATE OR REPLACE VIEW public.q_cb_mod_monthly_curr_rates_inc
+ AS
+ SELECT q_cb_mod_monthly_curr_rates_activem.rep_month,
+    q_cb_mod_monthly_curr_rates_activem.user_id,
+    q_cb_mod_monthly_curr_rates_activem.session_id,
+    q_cb_mod_monthly_curr_rates_activem.pc,
+    q_cb_mod_monthly_curr_rates_activem.exp_cb_mon,
+    q_cb_mod_monthly_curr_rates_activem.r_eur_try / q_cb_mod_curr_base_val.r_eur_try - 1::numeric AS rt_eur_try,
+    q_cb_mod_monthly_curr_rates_activem.r_eur_usd / q_cb_mod_curr_base_val.r_eur_usd - 1::numeric AS rt_eur_usd,
+    q_cb_mod_monthly_curr_rates_activem.r_usd_try / q_cb_mod_curr_base_val.r_usd_try - 1::numeric AS rt_usd_try,
+    q_cb_mod_monthly_curr_rates_activem.r_usd_eur / q_cb_mod_curr_base_val.r_usd_eur - 1::numeric AS rt_usd_eur,
+    q_cb_mod_monthly_curr_rates_activem.rep_month_userid_sessionid,
+    q_cb_mod_monthly_curr_rates_activem.rm_month,
+    q_cb_mod_monthly_curr_rates_activem.jkey_curr_index
+   FROM q_cb_mod_monthly_curr_rates_activem
+     LEFT JOIN q_cb_mod_curr_base_val ON q_cb_mod_monthly_curr_rates_activem.rep_month_userid_sessionid::text = q_cb_mod_curr_base_val.rep_month_userid_sessionid
+  GROUP BY q_cb_mod_monthly_curr_rates_activem.rm_month, q_cb_mod_monthly_curr_rates_activem.jkey_curr_index, q_cb_mod_monthly_curr_rates_activem.rep_month_userid_sessionid, q_cb_mod_monthly_curr_rates_activem.rep_month, q_cb_mod_monthly_curr_rates_activem.user_id, q_cb_mod_monthly_curr_rates_activem.session_id, q_cb_mod_monthly_curr_rates_activem.pc, q_cb_mod_monthly_curr_rates_activem.exp_cb_mon, (q_cb_mod_monthly_curr_rates_activem.r_eur_try / q_cb_mod_curr_base_val.r_eur_try - 1::numeric), (q_cb_mod_monthly_curr_rates_activem.r_eur_usd / q_cb_mod_curr_base_val.r_eur_usd - 1::numeric), (q_cb_mod_monthly_curr_rates_activem.r_usd_try / q_cb_mod_curr_base_val.r_usd_try - 1::numeric), (q_cb_mod_monthly_curr_rates_activem.r_usd_eur / q_cb_mod_curr_base_val.r_usd_eur - 1::numeric);
+
+ALTER TABLE public.q_cb_mod_monthly_curr_rates_inc
+    OWNER TO ictasadmin;
+
+
+
+-- View: public.q_cb_mod_curr_escalation_rates
+
+-- DROP VIEW public.q_cb_mod_curr_escalation_rates;
+
+CREATE OR REPLACE VIEW public.q_cb_mod_curr_escalation_rates
+ AS
+ SELECT q_cb_mod_active_months_res_qty.rep_month,
+    q_cb_mod_monthly_curr_rates_inc.user_id,
+    q_cb_mod_monthly_curr_rates_inc.session_id,
+    q_cb_mod_active_months_res_qty.pc,
+    q_cb_mod_active_months_res_qty.l_1,
+    q_cb_mod_active_months_res_qty.l_2,
+    q_cb_mod_active_months_res_qty.l_3,
+    q_cb_mod_active_months_res_qty.l_4,
+    q_cb_mod_active_months_res_qty.l_5,
+    q_cb_mod_active_months_res_qty.l_6,
+    q_cb_mod_active_months_res_qty.exp_cb_mon AS month,
+    q_cb_mod_active_months_res_qty.rs_l1,
+    q_cb_mod_active_months_res_qty.rs_l2,
+    q_cb_mod_active_months_res_qty.rs_l3,
+    q_cb_mod_active_months_res_qty.rs_l4,
+        CASE
+            WHEN r4_code.currency::text = 'TRY'::text AND r4_code.w_inf_usd <> 0::numeric THEN 1::numeric + q_cb_mod_monthly_curr_rates_inc.rt_usd_try * r4_code.w_inf_usd
+            ELSE
+            CASE
+                WHEN r4_code.currency::text = 'EUR'::text AND r4_code.w_inf_usd <> 0::numeric THEN 1::numeric + q_cb_mod_monthly_curr_rates_inc.rt_usd_eur * r4_code.w_inf_usd
+                ELSE 1::numeric
+            END
+        END AS k_usd,
+        CASE
+            WHEN r4_code.currency::text = 'TRY'::text AND r4_code.w_inf_eur <> 0::numeric THEN 1::numeric + q_cb_mod_monthly_curr_rates_inc.rt_eur_try * r4_code.w_inf_eur
+            ELSE
+            CASE
+                WHEN r4_code.currency::text = 'USD'::text AND r4_code.w_inf_eur <> 0::numeric THEN 1::numeric + q_cb_mod_monthly_curr_rates_inc.rt_eur_usd * r4_code.w_inf_eur
+                ELSE 1::numeric
+            END
+        END AS k_eur,
+    r4_code.w_inf_usd,
+    r4_code.w_inf_eur,
+    r4_code.currency AS curr,
+    q_cb_mod_active_months_res_qty.key_r4_simple,
+    q_cb_mod_active_months_res_qty.key_full,
+    q_cb_mod_active_months_res_qty.key_r_pc_l6,
+    q_cb_mod_active_months_res_qty.key_r4,
+    (((q_cb_mod_active_months_res_qty.key_full::text || '.'::text) || r4_code.currency::text) || '.'::text) || q_cb_mod_active_months_res_qty.exp_cb_mon AS key_full_comb
+   FROM q_cb_mod_active_months_res_qty
+     LEFT JOIN q_cb_mod_monthly_curr_rates_inc ON q_cb_mod_active_months_res_qty.exp_cb_mon = q_cb_mod_monthly_curr_rates_inc.exp_cb_mon AND q_cb_mod_active_months_res_qty.pc::text = q_cb_mod_monthly_curr_rates_inc.pc::text AND q_cb_mod_active_months_res_qty.rep_month::text = q_cb_mod_monthly_curr_rates_inc.rep_month::text
+     LEFT JOIN r4_code ON q_cb_mod_active_months_res_qty.key_r4_simple::text = r4_code.key_r4_simple::text;
+
+ALTER TABLE public.q_cb_mod_curr_escalation_rates
+    OWNER TO ictasadmin;
+
+
+
+-- View: public.q_cb_mod_analysis_activem_with_prices
+
+-- DROP VIEW public.q_cb_mod_analysis_activem_with_prices;
+
+CREATE OR REPLACE VIEW public.q_cb_mod_analysis_activem_with_prices
+ AS
+ SELECT q_cb_mod_active_months_res_qty.rep_month,
+    q_cb_mod_active_months_res_qty.pc,
+    q_cb_mod_active_months_res_qty.exp_cb_mon,
+    q_cb_mod_active_months_res_qty.an_rs_quantity,
+    q_cb_mod_active_months_res_qty.key_r4,
+    q_cb_mod_active_months_res_qty.key_r_pc_l6,
+    q_cb_mod_active_months_res_qty.key_full,
+    t_cb_res_up.up_cost,
+    q_cb_mod_active_months_res_qty.l_1,
+    q_cb_mod_active_months_res_qty.l_2,
+    q_cb_mod_active_months_res_qty.l_3,
+    q_cb_mod_active_months_res_qty.l_4,
+    q_cb_mod_active_months_res_qty.l_5,
+    q_cb_mod_active_months_res_qty.l_6,
+    q_cb_mod_active_months_res_qty.rs_l1,
+    q_cb_mod_active_months_res_qty.rs_l2,
+    q_cb_mod_active_months_res_qty.rs_l3,
+    q_cb_mod_active_months_res_qty.rs_l4,
+    r4_code.currency,
+    q_cb_mod_active_months_res_qty.key_r4_simple,
+    (((q_cb_mod_active_months_res_qty.pc::text || '.'::text) || q_cb_mod_active_months_res_qty.rep_month::text) || '.'::text) || ((((EXTRACT(day FROM q_cb_mod_active_months_res_qty.exp_cb_mon)::text || '.'::text) || EXTRACT(month FROM q_cb_mod_active_months_res_qty.exp_cb_mon)::text) || '.'::text) || EXTRACT(year FROM q_cb_mod_active_months_res_qty.exp_cb_mon)::text) AS pc_rep_month
+   FROM q_cb_mod_active_months_res_qty
+     LEFT JOIN t_cb_res_up ON q_cb_mod_active_months_res_qty.key_r4::text = t_cb_res_up.key_r4::text
+     LEFT JOIN r4_code ON q_cb_mod_active_months_res_qty.key_r4_simple::text = r4_code.key_r4_simple::text;
+
+ALTER TABLE public.q_cb_mod_analysis_activem_with_prices
+    OWNER TO ictasadmin;
 
 DROP VIEW IF EXISTS q_cb_mod_up_pre_coeff_activem_indexes cascade;
+
 If motor_type = 'motor_one'::text 
 THEN RAISE NOTICE 'Using Motor One';
 CREATE OR REPLACE VIEW q_cb_mod_up_pre_coeff_activem_indexes AS
@@ -532,122 +546,88 @@ ELSE RAISE NOTICE 'Using Motor Two';
 
 DROP VIEW IF EXISTS q_cb_mod_indexes_and_curr CASCADE;
 
-CREATE OR REPLACE VIEW q_cb_mod_indexes_and_curr
+-- View: public.q_cb_mod_indexes_and_curr
+
+-- DROP VIEW public.q_cb_mod_indexes_and_curr;
+
+CREATE OR REPLACE VIEW public.q_cb_mod_indexes_and_curr
  AS
-SELECT q_cb_mod_monthly_curr_rates_inc.rep_month
-	,q_cb_mod_monthly_curr_rates_inc.user_id
-	,q_cb_mod_monthly_curr_rates_inc.session_id
-	,q_cb_mod_monthly_curr_rates_inc.pc
-	,q_cb_mod_monthly_curr_rates_inc.exp_cb_mon
-	,q_cb_mod_monthly_curr_rates_inc.rt_eur_try
-	,q_cb_mod_monthly_curr_rates_inc.rt_eur_usd
-	,q_cb_mod_monthly_curr_rates_inc.rt_usd_try
-	,q_cb_mod_monthly_curr_rates_inc.rt_usd_eur
-	,t_cb_mod_indexes.bb_ufe
-	,t_cb_mod_indexes.bb_tufe
-	,t_cb_mod_indexes.bb_inf_usd
-	,t_cb_mod_indexes.bb_inf_eur
-	,t_cb_mod_indexes.bb_metal
-	,t_cb_mod_indexes.bb_petrol
-	,t_cb_mod_indexes.bb_cement
-	,t_cb_mod_indexes.bb_electricity 
-FROM q_cb_mod_monthly_curr_rates_inc
-	LEFT JOIN t_cb_mod_indexes ON (q_cb_mod_monthly_curr_rates_inc.exp_cb_mon = t_cb_mod_indexes.month) 
-	AND (q_cb_mod_monthly_curr_rates_inc.session_id = t_cb_mod_indexes.session_id) 
-	AND (q_cb_mod_monthly_curr_rates_inc.user_id = t_cb_mod_indexes.user_id) 
-	AND (q_cb_mod_monthly_curr_rates_inc.rep_month = t_cb_mod_indexes.rep_month) 
-GROUP BY q_cb_mod_monthly_curr_rates_inc.rep_month
-	,q_cb_mod_monthly_curr_rates_inc.user_id
-	,q_cb_mod_monthly_curr_rates_inc.session_id
-	,q_cb_mod_monthly_curr_rates_inc.pc
-	,q_cb_mod_monthly_curr_rates_inc.exp_cb_mon
-	,q_cb_mod_monthly_curr_rates_inc.rt_eur_try
-	,q_cb_mod_monthly_curr_rates_inc.rt_eur_usd
-	,q_cb_mod_monthly_curr_rates_inc.rt_usd_try
-	,q_cb_mod_monthly_curr_rates_inc.rt_usd_eur
-	,t_cb_mod_indexes.bb_ufe
-	,t_cb_mod_indexes.bb_tufe
-	,t_cb_mod_indexes.bb_inf_usd
-	,t_cb_mod_indexes.bb_inf_eur
-	,t_cb_mod_indexes.bb_metal
-	,t_cb_mod_indexes.bb_petrol
-	,t_cb_mod_indexes.bb_cement
-	,t_cb_mod_indexes.bb_electricity;
+ SELECT q_cb_mod_monthly_curr_rates_inc.rep_month,
+    q_cb_mod_monthly_curr_rates_inc.user_id,
+    q_cb_mod_monthly_curr_rates_inc.session_id,
+    q_cb_mod_monthly_curr_rates_inc.pc,
+    q_cb_mod_monthly_curr_rates_inc.exp_cb_mon,
+    q_cb_mod_monthly_curr_rates_inc.rt_eur_try,
+    q_cb_mod_monthly_curr_rates_inc.rt_eur_usd,
+    q_cb_mod_monthly_curr_rates_inc.rt_usd_try,
+    q_cb_mod_monthly_curr_rates_inc.rt_usd_eur,
+    t_cb_mod_indexes.bb_ufe,
+    t_cb_mod_indexes.bb_tufe,
+    t_cb_mod_indexes.bb_inf_usd,
+    t_cb_mod_indexes.bb_inf_eur,
+    t_cb_mod_indexes.bb_metal,
+    t_cb_mod_indexes.bb_petrol,
+    t_cb_mod_indexes.bb_cement,
+    t_cb_mod_indexes.bb_electricity,
+    t_cb_mod_indexes.rep_month_userid_sessionid,
+    t_cb_mod_indexes.rm_month,
+    t_cb_mod_indexes.jkey_curr_index,
+    (((q_cb_mod_monthly_curr_rates_inc.pc::text || '.'::text) || q_cb_mod_monthly_curr_rates_inc.rep_month::text) || '.'::text) || ((((EXTRACT(day FROM q_cb_mod_monthly_curr_rates_inc.exp_cb_mon)::text || '.'::text) || EXTRACT(month FROM q_cb_mod_monthly_curr_rates_inc.exp_cb_mon)::text) || '.'::text) || EXTRACT(year FROM q_cb_mod_monthly_curr_rates_inc.exp_cb_mon)::text) AS pc_rep_month
+   FROM q_cb_mod_monthly_curr_rates_inc
+     LEFT JOIN t_cb_mod_indexes ON q_cb_mod_monthly_curr_rates_inc.jkey_curr_index::text = t_cb_mod_indexes.jkey_curr_index::text
+  GROUP BY ((((q_cb_mod_monthly_curr_rates_inc.pc::text || '.'::text) || q_cb_mod_monthly_curr_rates_inc.rep_month::text) || '.'::text) || ((((EXTRACT(day FROM q_cb_mod_monthly_curr_rates_inc.exp_cb_mon)::text || '.'::text) || EXTRACT(month FROM q_cb_mod_monthly_curr_rates_inc.exp_cb_mon)::text) || '.'::text) || EXTRACT(year FROM q_cb_mod_monthly_curr_rates_inc.exp_cb_mon)::text)), t_cb_mod_indexes.jkey_curr_index, t_cb_mod_indexes.rm_month, t_cb_mod_indexes.rep_month_userid_sessionid, q_cb_mod_monthly_curr_rates_inc.rep_month, q_cb_mod_monthly_curr_rates_inc.user_id, q_cb_mod_monthly_curr_rates_inc.session_id, q_cb_mod_monthly_curr_rates_inc.pc, q_cb_mod_monthly_curr_rates_inc.exp_cb_mon, q_cb_mod_monthly_curr_rates_inc.rt_eur_try, q_cb_mod_monthly_curr_rates_inc.rt_eur_usd, q_cb_mod_monthly_curr_rates_inc.rt_usd_try, q_cb_mod_monthly_curr_rates_inc.rt_usd_eur, t_cb_mod_indexes.bb_ufe, t_cb_mod_indexes.bb_tufe, t_cb_mod_indexes.bb_inf_usd, t_cb_mod_indexes.bb_inf_eur, t_cb_mod_indexes.bb_metal, t_cb_mod_indexes.bb_petrol, t_cb_mod_indexes.bb_cement, t_cb_mod_indexes.bb_electricity;
+
+ALTER TABLE public.q_cb_mod_indexes_and_curr
+    OWNER TO ictasadmin;
 
 DROP VIEW IF EXISTS q_cb_mod_up_pre_coeff_activem_indexes CASCADE;
 
-CREATE OR REPLACE VIEW q_cb_mod_up_pre_coeff_activem_indexes AS
-SELECT q_cb_mod_analysis_activem_with_prices.rep_month
-	,q_cb_mod_indexes_and_curr.user_id
-	,q_cb_mod_indexes_and_curr.session_id
-	,q_cb_mod_analysis_activem_with_prices.pc
-	,q_cb_mod_analysis_activem_with_prices.l_1
-	,q_cb_mod_analysis_activem_with_prices.l_2
-	,q_cb_mod_analysis_activem_with_prices.l_3
-	,q_cb_mod_analysis_activem_with_prices.l_4
-	,q_cb_mod_analysis_activem_with_prices.l_5
-	,q_cb_mod_analysis_activem_with_prices.l_6
-	,q_cb_mod_indexes_and_curr.rt_eur_try
-	,q_cb_mod_indexes_and_curr.rt_eur_usd
-	,q_cb_mod_indexes_and_curr.rt_usd_try
-	,q_cb_mod_indexes_and_curr.rt_usd_eur
-	,q_cb_mod_analysis_activem_with_prices.exp_cb_mon
-	,q_cb_mod_analysis_activem_with_prices.rs_l1
-	,q_cb_mod_analysis_activem_with_prices.rs_l2
-	,q_cb_mod_analysis_activem_with_prices.rs_l3
-	,q_cb_mod_analysis_activem_with_prices.rs_l4
-	,q_cb_mod_indexes_and_curr.bb_ufe
-	,q_cb_mod_indexes_and_curr.bb_tufe
-	,q_cb_mod_indexes_and_curr.bb_inf_usd
-	,q_cb_mod_indexes_and_curr.bb_inf_eur
-	,q_cb_mod_indexes_and_curr.bb_metal
-	,q_cb_mod_indexes_and_curr.bb_petrol
-	,q_cb_mod_indexes_and_curr.bb_cement
-	,q_cb_mod_indexes_and_curr.bb_electricity
-	,q_cb_mod_analysis_activem_with_prices.currency AS curr
-	,q_cb_mod_analysis_activem_with_prices.an_rs_quantity
-	,q_cb_mod_analysis_activem_with_prices.up_cost
-	,q_cb_mod_analysis_activem_with_prices.key_r4_simple
-	,q_cb_mod_analysis_activem_with_prices.key_r4
-	,q_cb_mod_analysis_activem_with_prices.key_r_pc_l6
-	,q_cb_mod_analysis_activem_with_prices.key_full 
-FROM q_cb_mod_analysis_activem_with_prices
-	LEFT JOIN q_cb_mod_indexes_and_curr ON (q_cb_mod_analysis_activem_with_prices.pc = q_cb_mod_indexes_and_curr.pc) 
-	AND (q_cb_mod_analysis_activem_with_prices.exp_cb_mon = q_cb_mod_indexes_and_curr.exp_cb_mon) 
-	AND (q_cb_mod_analysis_activem_with_prices.rep_month = q_cb_mod_indexes_and_curr.rep_month);
+-- View: public.q_cb_mod_up_pre_coeff_activem_indexes
 
-DROP VIEW IF EXISTS q_cb_mod_res_up_market_coeff;
+-- DROP VIEW public.q_cb_mod_up_pre_coeff_activem_indexes;
 
-CREATE OR REPLACE VIEW q_cb_mod_res_up_market_coeff
+CREATE OR REPLACE VIEW public.q_cb_mod_up_pre_coeff_activem_indexes
  AS
- SELECT q_cb_mod_up_pre_coeff_activem_indexes.rep_month,
-    q_cb_mod_up_pre_coeff_activem_indexes.user_id,
-    q_cb_mod_up_pre_coeff_activem_indexes.session_id,
-    q_cb_mod_up_pre_coeff_activem_indexes.pc,
-    q_cb_mod_up_pre_coeff_activem_indexes.l_1,
-    q_cb_mod_up_pre_coeff_activem_indexes.l_2,
-    q_cb_mod_up_pre_coeff_activem_indexes.l_3,
-    q_cb_mod_up_pre_coeff_activem_indexes.l_4,
-    q_cb_mod_up_pre_coeff_activem_indexes.l_5,
-    q_cb_mod_up_pre_coeff_activem_indexes.l_6,
-    q_cb_mod_up_pre_coeff_activem_indexes.rs_l1,
-    q_cb_mod_up_pre_coeff_activem_indexes.rs_l2,
-    q_cb_mod_up_pre_coeff_activem_indexes.rs_l3,
-    q_cb_mod_up_pre_coeff_activem_indexes.rs_l4 ,
-    (1::numeric + r4_code.w_ufe * q_cb_mod_up_pre_coeff_activem_indexes.bb_ufe) * (1::numeric + r4_code.w_tufe * q_cb_mod_up_pre_coeff_activem_indexes.bb_tufe) * (1::numeric + r4_code.w_inf_usd * q_cb_mod_up_pre_coeff_activem_indexes.bb_inf_usd) * (1::numeric + r4_code.w_inf_eur * q_cb_mod_up_pre_coeff_activem_indexes.bb_inf_eur) * (1::numeric + r4_code.w_metal * q_cb_mod_up_pre_coeff_activem_indexes.bb_metal) * (1::numeric + r4_code.w_petrol * q_cb_mod_up_pre_coeff_activem_indexes.bb_petrol) * (1::numeric + r4_code.w_cement * q_cb_mod_up_pre_coeff_activem_indexes.bb_cement) * (1::numeric + r4_code.w_electricity * q_cb_mod_up_pre_coeff_activem_indexes.bb_electricity) AS up_cost_coeff,
-    q_cb_mod_up_pre_coeff_activem_indexes.exp_cb_mon AS "month",
-    q_cb_mod_up_pre_coeff_activem_indexes.up_cost,
-    q_cb_mod_up_pre_coeff_activem_indexes.an_rs_quantity,
-    r4_code.currency as curr,
-    q_cb_mod_up_pre_coeff_activem_indexes.key_r4_simple,
-    q_cb_mod_up_pre_coeff_activem_indexes.key_r4,
-    q_cb_mod_up_pre_coeff_activem_indexes.key_r_pc_l6,
-    q_cb_mod_up_pre_coeff_activem_indexes.key_full,
-    (((q_cb_mod_up_pre_coeff_activem_indexes.key_full::text || '.'::text) || q_cb_mod_up_pre_coeff_activem_indexes.curr::text) || '.'::text) || q_cb_mod_up_pre_coeff_activem_indexes.exp_cb_mon AS key_full_comb
-   FROM q_cb_mod_up_pre_coeff_activem_indexes
-     LEFT JOIN r4_code ON q_cb_mod_up_pre_coeff_activem_indexes.key_r4_simple::text = r4_code.key_r4_simple::text
-  GROUP BY q_cb_mod_up_pre_coeff_activem_indexes.user_id,q_cb_mod_up_pre_coeff_activem_indexes.session_id,q_cb_mod_up_pre_coeff_activem_indexes.rep_month, q_cb_mod_up_pre_coeff_activem_indexes.pc, q_cb_mod_up_pre_coeff_activem_indexes.l_1, q_cb_mod_up_pre_coeff_activem_indexes.l_2, q_cb_mod_up_pre_coeff_activem_indexes.l_3, q_cb_mod_up_pre_coeff_activem_indexes.l_4, q_cb_mod_up_pre_coeff_activem_indexes.l_5, q_cb_mod_up_pre_coeff_activem_indexes.l_6, q_cb_mod_up_pre_coeff_activem_indexes.rs_l1, q_cb_mod_up_pre_coeff_activem_indexes.rs_l2, q_cb_mod_up_pre_coeff_activem_indexes.rs_l3, q_cb_mod_up_pre_coeff_activem_indexes.rs_l4, ((1::numeric + r4_code.w_ufe * q_cb_mod_up_pre_coeff_activem_indexes.bb_ufe) * (1::numeric + r4_code.w_tufe * q_cb_mod_up_pre_coeff_activem_indexes.bb_tufe) * (1::numeric + r4_code.w_inf_usd * q_cb_mod_up_pre_coeff_activem_indexes.bb_inf_usd) * (1::numeric + r4_code.w_inf_eur * q_cb_mod_up_pre_coeff_activem_indexes.bb_inf_eur) * (1::numeric + r4_code.w_metal * q_cb_mod_up_pre_coeff_activem_indexes.bb_metal) * (1::numeric + r4_code.w_petrol * q_cb_mod_up_pre_coeff_activem_indexes.bb_petrol) * (1::numeric + r4_code.w_cement * q_cb_mod_up_pre_coeff_activem_indexes.bb_cement) * (1::numeric + r4_code.w_electricity * q_cb_mod_up_pre_coeff_activem_indexes.bb_electricity)), q_cb_mod_up_pre_coeff_activem_indexes.exp_cb_mon, q_cb_mod_up_pre_coeff_activem_indexes.up_cost, q_cb_mod_up_pre_coeff_activem_indexes.an_rs_quantity, r4_code.currency, q_cb_mod_up_pre_coeff_activem_indexes.key_r4_simple, q_cb_mod_up_pre_coeff_activem_indexes.key_r4, q_cb_mod_up_pre_coeff_activem_indexes.key_r_pc_l6, q_cb_mod_up_pre_coeff_activem_indexes.key_full, ((((q_cb_mod_up_pre_coeff_activem_indexes.key_full::text || '.'::text) || q_cb_mod_up_pre_coeff_activem_indexes.curr::text) || '.'::text) || q_cb_mod_up_pre_coeff_activem_indexes.exp_cb_mon)
-  ORDER BY q_cb_mod_up_pre_coeff_activem_indexes.rep_month, q_cb_mod_up_pre_coeff_activem_indexes.pc, q_cb_mod_up_pre_coeff_activem_indexes.l_1, q_cb_mod_up_pre_coeff_activem_indexes.l_2, q_cb_mod_up_pre_coeff_activem_indexes.l_3, q_cb_mod_up_pre_coeff_activem_indexes.l_4, q_cb_mod_up_pre_coeff_activem_indexes.l_5, q_cb_mod_up_pre_coeff_activem_indexes.l_6, q_cb_mod_up_pre_coeff_activem_indexes.rs_l1, q_cb_mod_up_pre_coeff_activem_indexes.rs_l2, q_cb_mod_up_pre_coeff_activem_indexes.rs_l3, q_cb_mod_up_pre_coeff_activem_indexes.rs_l4, q_cb_mod_up_pre_coeff_activem_indexes.exp_cb_mon;
+ SELECT q_cb_mod_analysis_activem_with_prices.rep_month,
+    q_cb_mod_indexes_and_curr.user_id,
+    q_cb_mod_indexes_and_curr.session_id,
+    q_cb_mod_analysis_activem_with_prices.pc,
+    q_cb_mod_analysis_activem_with_prices.l_1,
+    q_cb_mod_analysis_activem_with_prices.l_2,
+    q_cb_mod_analysis_activem_with_prices.l_3,
+    q_cb_mod_analysis_activem_with_prices.l_4,
+    q_cb_mod_analysis_activem_with_prices.l_5,
+    q_cb_mod_analysis_activem_with_prices.l_6,
+    q_cb_mod_indexes_and_curr.rt_eur_try,
+    q_cb_mod_indexes_and_curr.rt_eur_usd,
+    q_cb_mod_indexes_and_curr.rt_usd_try,
+    q_cb_mod_indexes_and_curr.rt_usd_eur,
+    q_cb_mod_analysis_activem_with_prices.exp_cb_mon,
+    q_cb_mod_analysis_activem_with_prices.rs_l1,
+    q_cb_mod_analysis_activem_with_prices.rs_l2,
+    q_cb_mod_analysis_activem_with_prices.rs_l3,
+    q_cb_mod_analysis_activem_with_prices.rs_l4,
+    q_cb_mod_indexes_and_curr.bb_ufe,
+    q_cb_mod_indexes_and_curr.bb_tufe,
+    q_cb_mod_indexes_and_curr.bb_inf_usd,
+    q_cb_mod_indexes_and_curr.bb_inf_eur,
+    q_cb_mod_indexes_and_curr.bb_metal,
+    q_cb_mod_indexes_and_curr.bb_petrol,
+    q_cb_mod_indexes_and_curr.bb_cement,
+    q_cb_mod_indexes_and_curr.bb_electricity,
+    q_cb_mod_analysis_activem_with_prices.currency AS curr,
+    q_cb_mod_analysis_activem_with_prices.an_rs_quantity,
+    q_cb_mod_analysis_activem_with_prices.up_cost,
+    q_cb_mod_analysis_activem_with_prices.key_r4_simple,
+    q_cb_mod_analysis_activem_with_prices.key_r4,
+    q_cb_mod_analysis_activem_with_prices.key_r_pc_l6,
+    q_cb_mod_analysis_activem_with_prices.key_full,
+    q_cb_mod_analysis_activem_with_prices.pc_rep_month
+   FROM q_cb_mod_analysis_activem_with_prices
+     LEFT JOIN q_cb_mod_indexes_and_curr ON q_cb_mod_analysis_activem_with_prices.pc_rep_month = q_cb_mod_indexes_and_curr.pc_rep_month;
+
+ALTER TABLE public.q_cb_mod_up_pre_coeff_activem_indexes
+    OWNER TO ictasadmin;
 
 if motor_market_status = 'ON'
 Then

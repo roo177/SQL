@@ -23,7 +23,8 @@ CREATE OR REPLACE VIEW public.q_cb_mod_analysis_activem_with_prices
     q_cb_mod_active_months_res_qty.rs_l3,
     q_cb_mod_active_months_res_qty.rs_l4,
     r4_code.currency,
-    q_cb_mod_active_months_res_qty.key_r4_simple
+    q_cb_mod_active_months_res_qty.key_r4_simple,
+    (((q_cb_mod_active_months_res_qty.pc::text || '.'::text) || q_cb_mod_active_months_res_qty.rep_month::text) || '.'::text) || ((((EXTRACT(day FROM q_cb_mod_active_months_res_qty.exp_cb_mon)::text || '.'::text) || EXTRACT(month FROM q_cb_mod_active_months_res_qty.exp_cb_mon)::text) || '.'::text) || EXTRACT(year FROM q_cb_mod_active_months_res_qty.exp_cb_mon)::text) AS pc_rep_month
    FROM q_cb_mod_active_months_res_qty
      LEFT JOIN t_cb_res_up ON q_cb_mod_active_months_res_qty.key_r4::text = t_cb_res_up.key_r4::text
      LEFT JOIN r4_code ON q_cb_mod_active_months_res_qty.key_r4_simple::text = r4_code.key_r4_simple::text;

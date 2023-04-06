@@ -51,5 +51,5 @@ from t_cb_inc_st
 END; 
 $BODY$;
 
-ALTER FUNCTION public.q_cb_mod_inc_mt(text, text)
-    OWNER TO ictasadmin;
+--ALTER FUNCTION public.q_cb_mod_inc_mt(text, text)
+    --OWNER TO ictasadmin;

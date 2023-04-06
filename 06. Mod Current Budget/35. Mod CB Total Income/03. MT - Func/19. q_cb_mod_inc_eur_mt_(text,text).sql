@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS t_cb_mod_inc_eur_st
     l_5 character varying(2) COLLATE pg_catalog."default",
     l_6 character varying(3) COLLATE pg_catalog."default",
     desc_tr_l6 character varying(150) COLLATE pg_catalog."default",
-    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default"
+    key_r_pc_l6 character varying(50) COLLATE pg_catalog."default" GENERATED ALWAYS AS ("rep_month" || '.' || "pc" || '.' || "l_1" || '.' || "l_2" || '.' || "l_3" || '.' || "l_4" || '.' || "l_5" || '.' || "l_6" ) STORED
 )
 
 TABLESPACE pg_default;
@@ -82,14 +82,14 @@ Raise notice 'Deleting existing data';
 EXECUTE format('Delete from t_cb_mod_inc_eur_st where user_id = %L and session_id = %L;', _user_id, _session_id);
 Raise notice 'Appending new data';
 
-Insert into t_cb_mod_inc_eur_st
+EXECUTE format('Insert into t_cb_mod_inc_eur_st
 
 Select 
 q_cb_mod_inc_eur.user_id,
 q_cb_mod_inc_eur.session_id,
 q_cb_mod_inc_eur.rep_month, 
 q_cb_mod_inc_eur.pc, 
-l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6 as j_code, 
+l_1 || ''.'' || l_2 || ''.'' || l_3 || ''.'' || l_4 || ''.'' || l_5 || ''.'' || l_6 as j_code, 
 c2_code.desc_tr_l2, 
 c3_code.desc_tr_l3, 
 q_cb_mod_inc_eur.month, 
@@ -101,17 +101,17 @@ q_cb_mod_inc_eur.l_3,
 q_cb_mod_inc_eur.l_4, 
 q_cb_mod_inc_eur.l_5, 
 q_cb_mod_inc_eur.l_6, 
-c6_code.desc_tr_l6, 
-q_cb_mod_inc_eur.key_r_pc_l6
+c6_code.desc_tr_l6
 from (q_cb_mod_inc_eur left join (c2_code right join c3_code on (c2_code.c_l1 = c3_code.c_l1) and (c2_code.c_l2 = c3_code.c_l2)) on (q_cb_mod_inc_eur.l_3 = c3_code.c_l3) and 
 (q_cb_mod_inc_eur.l_2 = c3_code.c_l2) and (q_cb_mod_inc_eur.l_1 = c3_code.c_l1)) left join c6_code on (q_cb_mod_inc_eur.l_6 = c6_code.c_l6) and (q_cb_mod_inc_eur.l_5 = c6_code.c_l5) and 
 (q_cb_mod_inc_eur.l_4 = c6_code.c_l4) and (q_cb_mod_inc_eur.l_3 = c6_code.c_l3) and (q_cb_mod_inc_eur.l_2 = c6_code.c_l2) and (q_cb_mod_inc_eur.l_1 = c6_code.c_l1)
+where q_cb_mod_inc_eur.user_id = %L and q_cb_mod_inc_eur.session_id = %L
 group by 
 q_cb_mod_inc_eur.user_id,
 q_cb_mod_inc_eur.session_id,
 q_cb_mod_inc_eur.rep_month, 
 q_cb_mod_inc_eur.pc, 
-l_1 || '.' || l_2 || '.' || l_3 || '.' || l_4 || '.' || l_5 || '.' || l_6, 
+l_1 || ''.'' || l_2 || ''.'' || l_3 || ''.'' || l_4 || ''.'' || l_5 || ''.'' || l_6, 
 c2_code.desc_tr_l2, 
 c3_code.desc_tr_l3, 
 q_cb_mod_inc_eur.month, 
@@ -123,12 +123,14 @@ q_cb_mod_inc_eur.l_4,
 q_cb_mod_inc_eur.l_5, 
 q_cb_mod_inc_eur.l_6, 
 c6_code.desc_tr_l6, 
-q_cb_mod_inc_eur.key_r_pc_l6;
-
+q_cb_mod_inc_eur.key_r_pc_l6;', _user_id, _session_id);
+Raise notice 'Append completed';
 RETURN TRUE;
 End;
 
+
+
 $BODY$;
 
-ALTER FUNCTION public.q_cb_mod_inc_eur_mt(text, text)
-    OWNER TO ictasadmin;
+--ALTER FUNCTION public.q_cb_mod_inc_eur_mt(text, text)
+    --OWNER TO ictasadmin;

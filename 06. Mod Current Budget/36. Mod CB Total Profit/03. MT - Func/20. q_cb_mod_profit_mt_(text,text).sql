@@ -93,8 +93,8 @@ CREATE OR REPLACE VIEW q_cb_mod_pr_wbs
     GROUP BY t_cb_mod_exp_st.user_id,t_cb_mod_exp_st.session_id,t_cb_mod_exp_st.rep_month, t_cb_mod_exp_st.pc, t_cb_mod_exp_st.l_1, t_cb_mod_exp_st.l_2, t_cb_mod_exp_st.l_3, t_cb_mod_exp_st.l_4, t_cb_mod_exp_st.l_5, t_cb_mod_exp_st.l_6, t_cb_mod_exp_st.curr, t_cb_mod_exp_st.month, t_cb_mod_exp_st.key_r_pc_l6,t_cb_mod_exp_st.jkey
     HAVING sum(t_cb_mod_exp_st.total_expense) <> 0::double precision;
 
-    ALTER TABLE q_cb_mod_pr_wbs
-        OWNER TO ictasadmin;			   
+    --ALTER TABLE q_cb_mod_pr_wbs
+        --OWNER TO ictasadmin;			   
 
     -- View: q_cb_mod_profit
 
@@ -134,8 +134,8 @@ CREATE OR REPLACE VIEW q_cb_mod_pr_wbs
 		where q_cb_mod_pr_wbs.user_id = %L and q_cb_mod_pr_wbs.session_id = %L
     ORDER BY q_cb_mod_pr_wbs.user_id,q_cb_mod_pr_wbs.session_id,q_cb_mod_pr_wbs.rep_month, q_cb_mod_pr_wbs.pc, q_cb_mod_pr_wbs.l_1, q_cb_mod_pr_wbs.l_2, q_cb_mod_pr_wbs.l_3, q_cb_mod_pr_wbs.l_4, q_cb_mod_pr_wbs.l_5, q_cb_mod_pr_wbs.l_6, q_cb_mod_pr_wbs.month;',_user_id,_session_id);
 
-    ALTER TABLE q_cb_mod_profit
-        OWNER TO ictasadmin;
+    --ALTER TABLE q_cb_mod_profit
+        --OWNER TO ictasadmin;
 
     Raise notice 'Deleting existing data';
 	EXECUTE format('DELETE FROM t_cb_mod_profit_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
@@ -209,8 +209,8 @@ CREATE OR REPLACE VIEW q_cb_mod_pr_wbs
         c6_code.unit
         ,c4_code.desc_tr_l4
         ,c5_code.desc_tr_l5
-        ,c1_code.desc_tr_l1
-;		
+        ,c1_code.desc_tr_l1;
+		
 	Raise notice 'Append completed';
 	
     RETURN TRUE;
@@ -219,5 +219,5 @@ CREATE OR REPLACE VIEW q_cb_mod_pr_wbs
     
 $BODY$;
 
-ALTER FUNCTION public.q_cb_mod_profit_mt(text, text)
-    OWNER TO ictasadmin;
+--ALTER FUNCTION public.q_cb_mod_profit_mt(text, text)
+    --OWNER TO ictasadmin;
