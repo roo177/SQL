@@ -1,6 +1,6 @@
 -- Table: public.t_cb_mod_indexes
 
--- DROP TABLE IF EXISTS public.t_cb_mod_indexes;
+DROP TABLE IF EXISTS public.t_cb_mod_indexes;
 
 CREATE TABLE IF NOT EXISTS public.t_cb_mod_indexes
 (

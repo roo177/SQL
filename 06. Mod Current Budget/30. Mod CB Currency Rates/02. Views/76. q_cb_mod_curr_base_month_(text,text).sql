@@ -1,6 +1,6 @@
 -- View: public.q_cb_mod_curr_base_month
 
--- DROP VIEW public.q_cb_mod_curr_base_month;
+DROP VIEW public.q_cb_mod_curr_base_month;
 
 CREATE OR REPLACE VIEW public.q_cb_mod_curr_base_month
  AS

@@ -1,6 +1,6 @@
 -- View: public.q_cb_mod_curr_base_val
 
--- DROP VIEW public.q_cb_mod_curr_base_val;
+DROP VIEW public.q_cb_mod_curr_base_val;
 
 CREATE OR REPLACE VIEW public.q_cb_mod_curr_base_val
  AS

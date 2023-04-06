@@ -1,6 +1,6 @@
 -- View: public.q_cb_mod_monthly_curr_rates_activem
 
--- DROP VIEW public.q_cb_mod_monthly_curr_rates_activem;
+DROP VIEW public.q_cb_mod_monthly_curr_rates_activem;
 
 CREATE OR REPLACE VIEW public.q_cb_mod_monthly_curr_rates_activem
  AS

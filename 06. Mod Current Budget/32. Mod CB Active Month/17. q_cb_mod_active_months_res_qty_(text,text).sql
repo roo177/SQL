@@ -1,6 +1,6 @@
 -- View: public.q_cb_mod_active_months_res_qty
 
--- DROP VIEW public.q_cb_mod_active_months_res_qty;
+DROP VIEW public.q_cb_mod_active_months_res_qty;
 
 CREATE OR REPLACE VIEW public.q_cb_mod_active_months_res_qty
  AS

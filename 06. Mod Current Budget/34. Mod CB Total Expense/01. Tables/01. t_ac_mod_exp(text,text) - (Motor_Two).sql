@@ -1,6 +1,6 @@
 -- Table: public.t_ac_mod_exp
 
--- DROP TABLE IF EXISTS public.t_ac_mod_exp;
+DROP TABLE IF EXISTS public.t_ac_mod_exp;
 
 CREATE TABLE IF NOT EXISTS public.t_ac_mod_exp
 (

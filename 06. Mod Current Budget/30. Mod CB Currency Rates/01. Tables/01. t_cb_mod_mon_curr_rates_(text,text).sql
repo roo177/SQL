@@ -1,6 +1,6 @@
 -- Table: public.t_cb_mod_mon_curr_rates
 
--- DROP TABLE IF EXISTS public.t_cb_mod_mon_curr_rates;
+DROP TABLE IF EXISTS public.t_cb_mod_mon_curr_rates;
 
 CREATE TABLE IF NOT EXISTS public.t_cb_mod_mon_curr_rates
 (
