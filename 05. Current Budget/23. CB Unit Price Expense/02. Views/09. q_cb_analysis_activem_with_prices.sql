@@ -1,6 +1,6 @@
 -- View: public.q_cb_analysis_activem_with_prices
 
-DROP VIEW public.q_cb_analysis_activem_with_prices;
+-- DROP VIEW public.q_cb_analysis_activem_with_prices;
 
 CREATE OR REPLACE VIEW public.q_cb_analysis_activem_with_prices
  AS
@@ -18,7 +18,7 @@ CREATE OR REPLACE VIEW public.q_cb_analysis_activem_with_prices
     q_cb_active_months_res_qty.rs_l4,
     q_cb_active_months_res_qty.exp_cb_mon,
     t_cb_res_up.up_cost,
-    r4_code.currency as curr,
+    r4_code.currency AS curr,
     q_cb_active_months_res_qty.an_rs_quantity,
     q_cb_active_months_res_qty.key_r4,
     q_cb_active_months_res_qty.key_r_pc_l6,

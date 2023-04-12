@@ -1,6 +1,6 @@
 -- View: public.q_cb_active_months_res_qty
 
-DROP VIEW public.q_cb_active_months_res_qty;
+-- DROP VIEW public.q_cb_active_months_res_qty;
 
 CREATE OR REPLACE VIEW public.q_cb_active_months_res_qty
  AS
@@ -17,7 +17,7 @@ CREATE OR REPLACE VIEW public.q_cb_active_months_res_qty
     t_cb_analysis.rs_l3,
     t_cb_analysis.rs_l4,
     q_cb_qty_activem_works.exp_cb_mon,
-    t_cb_analysis.an_rs_quantity,
+    (1::numeric + t_cb_analysis.r_loss) * t_cb_analysis.an_rs_quantity AS an_rs_quantity,
     t_cb_analysis.key_full,
     q_cb_qty_activem_works.key_r_pc_l6,
     t_cb_analysis.key_r4,

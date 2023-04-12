@@ -1,6 +1,6 @@
 -- View: public.q_cb_curr_escalation_rates
 
-DROP VIEW public.q_cb_curr_escalation_rates CASCADE;
+-- DROP VIEW public.q_cb_curr_escalation_rates;
 
 CREATE OR REPLACE VIEW public.q_cb_curr_escalation_rates
  AS

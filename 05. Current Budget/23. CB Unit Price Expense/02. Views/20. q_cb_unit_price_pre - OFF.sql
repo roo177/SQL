@@ -5,7 +5,7 @@
 CREATE OR REPLACE VIEW public.q_cb_unit_price_pre
  AS
  SELECT q_cb_up_pre_coeff_activem_indexes.rep_month,
-    q_cb_up_pre_coeff_activem_indexes.pc AS p01_code,
+    q_cb_up_pre_coeff_activem_indexes.pc,
     q_cb_up_pre_coeff_activem_indexes.l_1,
     q_cb_up_pre_coeff_activem_indexes.l_2,
     q_cb_up_pre_coeff_activem_indexes.l_3,
@@ -75,7 +75,7 @@ CREATE OR REPLACE VIEW public.q_cb_unit_price_pre
             WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_ufe) + r4_code.w_tufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_tufe) + r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity))
             ELSE 0::numeric
         END AS up_cost_total,
-    t_cb_analysis.an_rs_quantity,
+    q_cb_up_pre_coeff_activem_indexes.an_rs_quantity,
         CASE
             WHEN t_cb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_cb_exp_esc_rates_l6.exp_rate)
             ELSE 0::numeric

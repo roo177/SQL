@@ -20,7 +20,7 @@ CREATE OR REPLACE VIEW public.q_cb_exp
   WHERE q_pl_exp.total_expense <> 0::numeric
 UNION ALL
  SELECT t_cb_exp.rep_month,
-    t_cb_exp.pc AS pc,
+    t_cb_exp.pc,
     t_cb_exp.l_1,
     t_cb_exp.l_2,
     t_cb_exp.l_3,
