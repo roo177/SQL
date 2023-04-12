@@ -1,6 +1,6 @@
 -- View: public.q_bb_analysis_activem_with_prices
 
-DROP VIEW public.q_bb_analysis_activem_with_prices;
+-- DROP VIEW public.q_bb_analysis_activem_with_prices;
 
 CREATE OR REPLACE VIEW public.q_bb_analysis_activem_with_prices
  AS

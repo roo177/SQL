@@ -1,6 +1,6 @@
 -- View: public.q_bb_exp_eur
 
-DROP VIEW public.q_bb_exp_eur;
+-- DROP VIEW public.q_bb_exp_eur;
 
 CREATE OR REPLACE VIEW public.q_bb_exp_eur
  AS

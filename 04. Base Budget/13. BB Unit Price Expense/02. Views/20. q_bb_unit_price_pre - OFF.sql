@@ -1,6 +1,6 @@
 -- View: public.q_bb_unit_price_pre
 
-DROP VIEW public.q_bb_unit_price_pre CASCADE;
+-- DROP VIEW public.q_bb_unit_price_pre;
 
 CREATE OR REPLACE VIEW public.q_bb_unit_price_pre
  AS
@@ -75,7 +75,7 @@ CREATE OR REPLACE VIEW public.q_bb_unit_price_pre
             WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_ufe) + r4_code.w_tufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_tufe) + r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity))
             ELSE 0::numeric
         END AS up_cost_total,
-    t_bb_analysis.an_rs_quantity,
+    q_bb_up_pre_coeff_activem_indexes.an_rs_quantity,
         CASE
             WHEN t_bb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_bb_exp_esc_rates_l6.exp_rate)
             ELSE 0::numeric

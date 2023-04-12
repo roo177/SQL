@@ -30,3 +30,4 @@ CREATE OR REPLACE VIEW public.q_bb_exp_usd
 
 ALTER TABLE public.q_bb_exp_usd
     OWNER TO ictasadmin;
+

@@ -1,6 +1,6 @@
 -- View: public.q_bb_pl_exp
 
-DROP VIEW public.q_bb_pl_exp;
+-- DROP VIEW public.q_bb_pl_exp;
 
 CREATE OR REPLACE VIEW public.q_bb_pl_exp
  AS
@@ -22,3 +22,4 @@ CREATE OR REPLACE VIEW public.q_bb_pl_exp
 
 ALTER TABLE public.q_bb_pl_exp
     OWNER TO ictasadmin;
+
