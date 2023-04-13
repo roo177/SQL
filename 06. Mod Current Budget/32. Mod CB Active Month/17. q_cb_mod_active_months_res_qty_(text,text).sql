@@ -1,6 +1,6 @@
 -- View: public.q_cb_mod_active_months_res_qty
 
-DROP VIEW public.q_cb_mod_active_months_res_qty;
+-- DROP VIEW public.q_cb_mod_active_months_res_qty;
 
 CREATE OR REPLACE VIEW public.q_cb_mod_active_months_res_qty
  AS
@@ -22,10 +22,11 @@ CREATE OR REPLACE VIEW public.q_cb_mod_active_months_res_qty
     t_cb_analysis.rs_l4,
     t_cb_analysis.key_r4_simple,
     (1::numeric + t_cb_analysis.r_loss) * t_cb_analysis.an_rs_quantity AS an_rs_quantity,
-    t_cb_analysis.r_loss
+    t_cb_analysis.r_loss,
+    (t_cb_analysis.rep_month::text || '.'::text) || ((((EXTRACT(day FROM q_cb_mod_qty_activem_works.exp_cb_mon)::text || '.'::text) || EXTRACT(month FROM q_cb_mod_qty_activem_works.exp_cb_mon)::text) || '.'::text) || EXTRACT(year FROM q_cb_mod_qty_activem_works.exp_cb_mon)::text) AS rm_month
    FROM q_cb_mod_qty_activem_works
-     LEFT JOIN t_cb_analysis ON q_cb_mod_qty_activem_works.key_r_pc_l6::text = t_cb_analysis.key_r_pc_l6::text;
+     LEFT JOIN t_cb_analysis ON q_cb_mod_qty_activem_works.key_r_pc_l6::text = t_cb_analysis.key_r_pc_l6::text
+  WHERE t_cb_analysis.rep_month IS NOT NULL;
 
 ALTER TABLE public.q_cb_mod_active_months_res_qty
     OWNER TO ictasadmin;
-

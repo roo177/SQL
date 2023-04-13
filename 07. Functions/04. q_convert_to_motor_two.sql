@@ -1,9 +1,9 @@
--- FUNCTION: public.q_convert_to_motor_two()
+-- FUNCTION: public.q_convert_to_motor_two(text)
 
-DROP FUNCTION IF EXISTS public.q_convert_to_motor_two();
+DROP FUNCTION IF EXISTS public.q_convert_to_motor_two(text);
 
-CREATE OR REPLACE FUNCTION public.q_convert_to_motor_two(motor_market_status text
-	)
+CREATE OR REPLACE FUNCTION public.q_convert_to_motor_two(
+	motor_market_status text)
     RETURNS boolean
     LANGUAGE 'plpgsql'
     COST 100
@@ -118,8 +118,6 @@ CREATE OR REPLACE VIEW public.q_cb_up_coeff
      LEFT JOIN q_cb_curr_escalation_rates ON q_cb_res_up_market_coeff.key_full_comb = q_cb_curr_escalation_rates.key_full_comb
   GROUP BY q_cb_res_up_market_coeff.rep_month, q_cb_res_up_market_coeff.pc, q_cb_res_up_market_coeff.l_1, q_cb_res_up_market_coeff.l_2, q_cb_res_up_market_coeff.l_3, q_cb_res_up_market_coeff.l_4, q_cb_res_up_market_coeff.l_5, q_cb_res_up_market_coeff.l_6, q_cb_res_up_market_coeff.rs_l1, q_cb_res_up_market_coeff.rs_l2, q_cb_res_up_market_coeff.rs_l3, q_cb_res_up_market_coeff.rs_l4, q_cb_res_up_market_coeff.month, q_cb_res_up_market_coeff.up_cost_coeff, q_cb_curr_escalation_rates.k_usd, q_cb_curr_escalation_rates.k_eur, (round(q_cb_res_up_market_coeff.up_cost_coeff * q_cb_curr_escalation_rates.k_usd * q_cb_curr_escalation_rates.k_eur, 6)), q_cb_res_up_market_coeff.up_cost, q_cb_res_up_market_coeff.curr, q_cb_res_up_market_coeff.key_full, q_cb_res_up_market_coeff.an_rs_quantity, q_cb_res_up_market_coeff.key_r_pc_l6;
 
-
-
 if motor_market_status = 'ON'::text 
 THEN RAISE NOTICE 'Using Market Status On';
 
@@ -222,7 +220,7 @@ CREATE OR REPLACE VIEW public.q_cb_unit_price_pre
             WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_ufe) + r4_code.w_tufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_tufe) + r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity))
             ELSE 0::numeric
         END AS up_cost_total,
-    t_cb_analysis.an_rs_quantity,
+    q_cb_up_pre_coeff_activem_indexes.an_rs_quantity,
         CASE
             WHEN t_cb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_cb_exp_esc_rates_l6.exp_rate)
             ELSE 0::numeric
@@ -234,7 +232,6 @@ CREATE OR REPLACE VIEW public.q_cb_unit_price_pre
 
 ALTER TABLE public.q_cb_unit_price_pre
     OWNER TO ictasadmin;
-
 
 ELSE RAISE NOTICE 'Market Change OFF';
 
@@ -315,7 +312,7 @@ CREATE OR REPLACE VIEW public.q_cb_unit_price_pre
             WHEN t_cb_exp_esc_rates_l6.exp_rate IS NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_ufe) + r4_code.w_tufe * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_tufe) + r4_code.w_metal * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_metal) + r4_code.w_petrol * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_petrol) + r4_code.w_cement * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_cement) + r4_code.w_electricity * (1::numeric + q_cb_up_pre_coeff_activem_indexes.bb_electricity))
             ELSE 0::numeric
         END AS up_cost_total,
-    t_cb_analysis.an_rs_quantity,
+    q_cb_up_pre_coeff_activem_indexes.an_rs_quantity,
         CASE
             WHEN t_cb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_cb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_cb_exp_esc_rates_l6.exp_rate)
             ELSE 0::numeric
@@ -391,7 +388,6 @@ CREATE OR REPLACE VIEW public.q_pl_exp
 ALTER TABLE public.q_pl_exp
     OWNER TO ictasadmin;
 
-
 CREATE OR REPLACE VIEW public.q_cb_exp
  AS
  SELECT q_pl_exp.rep_month,
@@ -460,51 +456,45 @@ DROP VIEW IF EXISTS q_bb_up_pre_coeff_activem_indexes CASCADE;
 
 CREATE OR REPLACE VIEW public.q_bb_up_pre_coeff_activem_indexes
  AS
-SELECT q_bb_analysis_activem_with_prices.rep_month,
-       q_bb_analysis_activem_with_prices.pc,
-       q_bb_analysis_activem_with_prices.l_1,
-       q_bb_analysis_activem_with_prices.l_2,
-       q_bb_analysis_activem_with_prices.l_3,
-       q_bb_analysis_activem_with_prices.l_4,
-       q_bb_analysis_activem_with_prices.l_5,
-       q_bb_analysis_activem_with_prices.l_6,
-       q_bb_monthly_curr_rates_inc.rt_eur_try,
-       q_bb_monthly_curr_rates_inc.rt_eur_usd,
-       q_bb_monthly_curr_rates_inc.rt_usd_try,
-       q_bb_monthly_curr_rates_inc.rt_usd_eur,
-       q_bb_analysis_activem_with_prices.exp_base_mon,
-       q_bb_analysis_activem_with_prices.rs_l1,
-       q_bb_analysis_activem_with_prices.rs_l2,
-       q_bb_analysis_activem_with_prices.rs_l3,
-       q_bb_analysis_activem_with_prices.rs_l4,
-       t_bb_indexes.r_ufe,
-       t_bb_indexes.r_tufe,
-       t_bb_indexes.r_inf_usd,
-       t_bb_indexes.r_inf_eur,
-       t_bb_indexes.r_metal,
-       t_bb_indexes.r_petrol,
-       t_bb_indexes.r_cement,
-       t_bb_indexes.r_electricity,
-       q_bb_analysis_activem_with_prices.curr,
-       q_bb_analysis_activem_with_prices.an_rs_quantity,
-       q_bb_analysis_activem_with_prices.up_cost,
-       q_bb_analysis_activem_with_prices.key_r4_simple,
-       q_bb_analysis_activem_with_prices.key_r4,
-       q_bb_analysis_activem_with_prices.key_r_pc_l6,
-       q_bb_analysis_activem_with_prices.key_full
-FROM   (q_bb_analysis_activem_with_prices
-        LEFT JOIN t_bb_indexes
-               ON ( q_bb_analysis_activem_with_prices.rep_month =
-                    t_bb_indexes.rep_month )
-                  AND ( q_bb_analysis_activem_with_prices.exp_base_mon =
-                        t_bb_indexes.month ))
-       LEFT JOIN q_bb_monthly_curr_rates_inc
-              ON ( q_bb_analysis_activem_with_prices.rep_month =
-                             q_bb_monthly_curr_rates_inc.rep_month )
-                 AND ( q_bb_analysis_activem_with_prices.pc =
-                       q_bb_monthly_curr_rates_inc.pc )
-                 AND ( q_bb_analysis_activem_with_prices.exp_base_mon =
-                           q_bb_monthly_curr_rates_inc.exp_base_mon ); 
+ SELECT q_bb_analysis_activem_with_prices.rep_month,
+    q_bb_analysis_activem_with_prices.pc,
+    q_bb_analysis_activem_with_prices.l_1,
+    q_bb_analysis_activem_with_prices.l_2,
+    q_bb_analysis_activem_with_prices.l_3,
+    q_bb_analysis_activem_with_prices.l_4,
+    q_bb_analysis_activem_with_prices.l_5,
+    q_bb_analysis_activem_with_prices.l_6,
+    q_bb_monthly_curr_rates_inc.rt_eur_try,
+    q_bb_monthly_curr_rates_inc.rt_eur_usd,
+    q_bb_monthly_curr_rates_inc.rt_usd_try,
+    q_bb_monthly_curr_rates_inc.rt_usd_eur,
+    q_bb_analysis_activem_with_prices.exp_base_mon,
+    q_bb_analysis_activem_with_prices.rs_l1,
+    q_bb_analysis_activem_with_prices.rs_l2,
+    q_bb_analysis_activem_with_prices.rs_l3,
+    q_bb_analysis_activem_with_prices.rs_l4,
+    t_bb_indexes.r_ufe,
+    t_bb_indexes.r_tufe,
+    t_bb_indexes.r_inf_usd,
+    t_bb_indexes.r_inf_eur,
+    t_bb_indexes.r_metal,
+    t_bb_indexes.r_petrol,
+    t_bb_indexes.r_cement,
+    t_bb_indexes.r_electricity,
+    q_bb_analysis_activem_with_prices.curr,
+    q_bb_analysis_activem_with_prices.an_rs_quantity,
+    q_bb_analysis_activem_with_prices.up_cost,
+    q_bb_analysis_activem_with_prices.key_r4_simple,
+    q_bb_analysis_activem_with_prices.key_r4,
+    q_bb_analysis_activem_with_prices.key_r_pc_l6,
+    q_bb_analysis_activem_with_prices.key_full
+   FROM q_bb_analysis_activem_with_prices
+     LEFT JOIN t_bb_indexes ON q_bb_analysis_activem_with_prices.rep_month::text = t_bb_indexes.rep_month::text AND q_bb_analysis_activem_with_prices.exp_base_mon = t_bb_indexes.month AND q_bb_analysis_activem_with_prices.pc::text = t_bb_indexes.pc::text
+     LEFT JOIN q_bb_monthly_curr_rates_inc ON q_bb_analysis_activem_with_prices.rep_month::text = q_bb_monthly_curr_rates_inc.rep_month::text AND q_bb_analysis_activem_with_prices.pc::text = q_bb_monthly_curr_rates_inc.pc::text AND q_bb_analysis_activem_with_prices.exp_base_mon = q_bb_monthly_curr_rates_inc.exp_base_mon;
+
+ALTER TABLE public.q_bb_up_pre_coeff_activem_indexes
+    OWNER TO ictasadmin;
+
 
 CREATE OR REPLACE VIEW public.q_bb_res_up_market_coeff
  AS
@@ -565,7 +555,6 @@ CREATE OR REPLACE VIEW public.q_bb_up_coeff
 
 if motor_market_status = 'ON'::text 
 THEN RAISE NOTICE 'ON';
-
 
 DROP VIEW IF EXISTS public.q_bb_unit_price_pre;
 
@@ -666,7 +655,7 @@ CREATE OR REPLACE VIEW public.q_bb_unit_price_pre
             WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_ufe) + r4_code.w_tufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_tufe) + r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity))
             ELSE 0::numeric
         END AS up_cost_total,
-    t_bb_analysis.an_rs_quantity,
+    q_bb_up_pre_coeff_activem_indexes.an_rs_quantity,
         CASE
             WHEN t_bb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_bb_exp_esc_rates_l6.exp_rate)
             ELSE 0::numeric
@@ -680,8 +669,6 @@ ALTER TABLE public.q_bb_unit_price_pre
     OWNER TO ictasadmin;
 
 ELSE RAISE NOTICE 'OFF';
-
-
 
 -- View: public.q_bb_unit_price_pre
 
@@ -760,7 +747,7 @@ CREATE OR REPLACE VIEW public.q_bb_unit_price_pre
             WHEN t_bb_exp_esc_rates_l6.exp_rate IS NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (r4_code.w_ufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_ufe) + r4_code.w_tufe * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_tufe) + r4_code.w_metal * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_metal) + r4_code.w_petrol * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_petrol) + r4_code.w_cement * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_cement) + r4_code.w_electricity * (1::numeric + q_bb_up_pre_coeff_activem_indexes.r_electricity))
             ELSE 0::numeric
         END AS up_cost_total,
-    t_bb_analysis.an_rs_quantity,
+    q_bb_up_pre_coeff_activem_indexes.an_rs_quantity,
         CASE
             WHEN t_bb_exp_esc_rates_l6.exp_rate IS NOT NULL THEN q_bb_up_pre_coeff_activem_indexes.up_cost * (1::numeric + t_bb_exp_esc_rates_l6.exp_rate)
             ELSE 0::numeric
@@ -774,8 +761,6 @@ ALTER TABLE public.q_bb_unit_price_pre
     OWNER TO ictasadmin;
 
 end if;
-
-
 
 CREATE OR REPLACE VIEW public.q_bb_unit_price
  AS
@@ -812,7 +797,6 @@ ORDER  BY q_bb_unit_price_pre.rep_month,
           q_bb_unit_price_pre.l_5,
           q_bb_unit_price_pre.l_6,
           q_bb_unit_price_pre.month; 
-
 
 CREATE OR REPLACE VIEW public.q_bb_pl_exp
  AS
@@ -870,7 +854,6 @@ UNION ALL
 ALTER TABLE public.q_bb_exp
     OWNER TO ictasadmin;
 
-
 CREATE OR REPLACE VIEW public.q_bb_work_up_with_market_coeff
  AS
  SELECT q_bb_res_up_market_coeff.pc,
@@ -908,3 +891,5 @@ End;
 
 $BODY$;
 
+ALTER FUNCTION public.q_convert_to_motor_two(text)
+    OWNER TO ictasadmin;
