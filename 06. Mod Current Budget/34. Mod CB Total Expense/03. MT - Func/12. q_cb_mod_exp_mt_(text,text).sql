@@ -64,11 +64,34 @@ from q_cb_mod_exp
 left join (c2_code right join c3_code on (c2_code.c_l1 = c3_code.c_l1) and (c2_code.c_l2 = c3_code.c_l2)) on (q_cb_mod_exp.l_1 = c3_code.c_l1) and (q_cb_mod_exp.l_2 = c3_code.c_l2) and (q_cb_mod_exp.l_3 = c3_code.c_l3)
 where q_cb_mod_exp.user_id = %L and q_cb_mod_exp.session_id = %L 
 group by q_cb_mod_exp.user_id,q_cb_mod_exp.session_id,q_cb_mod_exp.rep_month, q_cb_mod_exp.pc, l_1 || ''.'' || l_2 || ''.'' || l_3 || ''.'' || l_4 || ''.'' || l_5 || ''.'' || l_6, c2_code.desc_tr_l2, c3_code.desc_tr_l3, q_cb_mod_exp.month, q_cb_mod_exp.curr, q_cb_mod_exp.l_1, q_cb_mod_exp.l_2, q_cb_mod_exp.l_3, q_cb_mod_exp.l_4, q_cb_mod_exp.l_5, q_cb_mod_exp.l_6;',_user_id,_session_id);
+
+EXECUTE format('Insert into t_cb_mod_exp_st
+select %L as user_id,
+%L as session_id,
+t_cb_exp.rep_month, 
+t_cb_exp.pc as pc, 
+l_1 || ''.'' || l_2 || ''.'' || l_3 || ''.'' || l_4 || ''.'' || l_5 || ''.'' || l_6 as j_code, 
+c2_code.desc_tr_l2, 
+c3_code.desc_tr_l3, 
+t_cb_exp.exp_ac_mon, 
+sum(t_cb_exp.exp_ac_exp) as total_expense, 
+t_cb_exp.curr, 
+t_cb_exp.l_1, 
+t_cb_exp.l_2, 
+t_cb_exp.l_3, 
+t_cb_exp.l_4, 
+t_cb_exp.l_5, 
+t_cb_exp.l_6
+from t_cb_exp 
+left join (c2_code right join c3_code on (c2_code.c_l1 = c3_code.c_l1) and (c2_code.c_l2 = c3_code.c_l2)) on (t_cb_exp.l_1 = c3_code.c_l1) and (t_cb_exp.l_2 = c3_code.c_l2) and (t_cb_exp.l_3 = c3_code.c_l3)
+where t_cb_exp.rep_month = (SELECT MAX(rep_month) from t_rep_month)
+group by t_cb_exp.rep_month, t_cb_exp.pc, l_1 || ''.'' || l_2 || ''.'' || l_3 || ''.'' || l_4 || ''.'' || l_5 || ''.'' || l_6, c2_code.desc_tr_l2, c3_code.desc_tr_l3, t_cb_exp.exp_ac_mon, t_cb_exp.exp_ac_exp, t_cb_exp.curr, t_cb_exp.l_1, t_cb_exp.l_2, t_cb_exp.l_3, t_cb_exp.l_4, t_cb_exp.l_5, t_cb_exp.l_6;',_user_id,_session_id);
+
 Raise notice 'Append completed';
 RETURN TRUE;
 End;
 
 $BODY$;
 
---ALTER FUNCTION public.q_cb_mod_exp_mt(text, text)
-    --OWNER TO ictasadmin;
+ALTER FUNCTION public.q_cb_mod_exp_mt(text, text)
+    OWNER TO ictasadmin;

@@ -35,15 +35,6 @@ from t_cb_indexes
 where rep_month = (SELECT MAX(rep_month) from t_rep_month);
 ', _user_id, _session_id);
 
-EXECUTE format('DELETE FROM t_ac_mod_exp where user_id = %L AND session_id = %L', _user_id, _session_id);
-
-EXECUTE format('INSERT INTO t_ac_mod_exp (rep_month, user_id, session_id, pc, l_1, l_2, l_3, l_4, l_5, l_6, exp_ac_mon, exp_ac_exp,curr,ccode)
-SELECT 
-rep_month, %L, %L, pc, l_1, l_2, l_3, l_4, l_5, l_6, exp_ac_mon, exp_ac_exp,curr,ccode
-from t_cb_exp
-where rep_month = (SELECT MAX(rep_month) from t_rep_month);
-', _user_id, _session_id);
-
 END
 $BODY$;
 

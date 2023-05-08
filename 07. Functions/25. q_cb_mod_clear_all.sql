@@ -1,6 +1,6 @@
 -- FUNCTION: public.q_cb_mod_clear_all()
 
--- DROP FUNCTION IF EXISTS public.q_cb_mod_clear_all();
+DROP FUNCTION IF EXISTS public.q_cb_mod_clear_all();
 
 CREATE OR REPLACE FUNCTION public.q_cb_mod_clear_all(
 	)
@@ -12,7 +12,6 @@ AS $BODY$
 BEGIN
 
 EXECUTE format('DELETE FROM t_cb_mod_mon_curr_rates ');
-EXECUTE format('DELETE FROM t_ac_mod_exp ');
 EXECUTE format('DELETE FROM t_cb_mod_indexes ');
 EXECUTE format('DELETE FROM t_cb_mod_exp_st ');
 EXECUTE format('DELETE FROM t_cb_mod_exp_eur_st ');

@@ -12,7 +12,6 @@ CREATE OR REPLACE FUNCTION public.q_cb_mod_clear(
 AS $BODY$
 BEGIN
 
-EXECUTE format('DELETE FROM t_ac_mod_exp WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
 EXECUTE format('DELETE FROM t_cb_mod_exp_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
 EXECUTE format('DELETE FROM t_cb_mod_exp_eur_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
 EXECUTE format('DELETE FROM t_cb_mod_exp_try_st WHERE user_id = %L and session_id = %L;', _user_id, _session_id);
